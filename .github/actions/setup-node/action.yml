@@ -1,0 +1,70 @@
+name: "Setup Node.js with ASDF"
+description: "Install and configure Node.js using ASDF version manager"
+
+inputs:
+  asdf-version:
+    description: "ASDF version to install"
+    required: false
+    default: "v0.14.1"
+  cache-dependencies:
+    description: "Cache node_modules dependencies"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install ASDF
+      shell: bash
+      run: |
+        if [ ! -d "$HOME/.asdf" ]; then
+          git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch ${{ inputs.asdf-version }}
+        fi
+        echo "$HOME/.asdf/bin" >> $GITHUB_PATH
+        echo "$HOME/.asdf/shims" >> $GITHUB_PATH
+
+    - name: Add ASDF to shell
+      shell: bash
+      run: |
+        echo ". $HOME/.asdf/asdf.sh" >> $HOME/.bashrc
+
+    - name: Add Node.js plugin
+      shell: bash
+      run: |
+        . $HOME/.asdf/asdf.sh
+        asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git || true
+
+    - name: Determine Node.js version
+      id: get-version
+      shell: bash
+      run: |
+        VERSION=$(grep nodejs .tool-versions | awk '{print $2}')
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Installing Node.js version: $VERSION"
+
+    - name: Cache ASDF and Node.js
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.asdf
+        key: asdf-nodejs-${{ runner.os }}-${{ steps.get-version.outputs.version }}
+        restore-keys: |
+          asdf-nodejs-${{ runner.os }}-
+
+    - name: Install Node.js
+      shell: bash
+      run: |
+        . $HOME/.asdf/asdf.sh
+        asdf install
+
+    - name: Cache node_modules
+      if: inputs.cache-dependencies == 'true'
+      id: cache-deps
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules
+          ~/.npm
+        key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}
+        restore-keys: |
+          npm-${{ runner.os }}-
