@@ -1,0 +1,73 @@
+name: Prettier Lint Check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  prettier-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Prettier check
+        id: prettier
+        run: |
+          if npx prettier --check . 2>&1 | tee prettier-output.txt; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "message=✅ All files are formatted correctly!" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            ERROR_MESSAGE=$(cat prettier-output.txt)
+            # Escape and format the error message for GitHub output
+            echo "message<<EOF" >> $GITHUB_OUTPUT
+            echo "❌ Prettier formatting issues found:" >> $GITHUB_OUTPUT
+            echo "\`\`\`" >> $GITHUB_OUTPUT
+            echo "$ERROR_MESSAGE" >> $GITHUB_OUTPUT
+            echo "\`\`\`" >> $GITHUB_OUTPUT
+            echo "" >> $GITHUB_OUTPUT
+            echo "Please run \`npm run format\` or \`npx prettier --write .\` to fix these issues." >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+        continue-on-error: true
+
+      - name: Find existing comment
+        uses: peter-evans/find-comment@v3
+        id: find-comment
+        if: github.event_name == 'pull_request'
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "Prettier Lint Check"
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v4
+        if: github.event_name == 'pull_request'
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            ## Prettier Lint Check
+
+            ${{ steps.prettier.outputs.message }}
+
+            ---
+            *Run ID: ${{ github.run_id }} | Commit: ${{ github.sha }}*
+
+      - name: Fail workflow if prettier check failed
+        if: steps.prettier.outputs.status == 'failure'
+        run: exit 1
