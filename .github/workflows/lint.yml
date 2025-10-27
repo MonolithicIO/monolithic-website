@@ -29,7 +29,7 @@ jobs:
           npx prettier --check . 2>&1 | tee prettier-output.txt
           PRETTIER_EXIT_CODE=${PIPESTATUS[0]}
           set -e
-          
+
           if [ $PRETTIER_EXIT_CODE -eq 0 ]; then
             echo "status=success" >> $GITHUB_OUTPUT
             echo "message=✅ All files are formatted correctly!" >> $GITHUB_OUTPUT
