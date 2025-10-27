@@ -25,7 +25,12 @@ jobs:
       - name: Run Prettier check
         id: prettier
         run: |
-          if npx prettier --check . 2>&1 | tee prettier-output.txt; then
+          set +e
+          npx prettier --check . 2>&1 | tee prettier-output.txt
+          PRETTIER_EXIT_CODE=${PIPESTATUS[0]}
+          set -e
+          
+          if [ $PRETTIER_EXIT_CODE -eq 0 ]; then
             echo "status=success" >> $GITHUB_OUTPUT
             echo "message=✅ All files are formatted correctly!" >> $GITHUB_OUTPUT
           else
@@ -40,7 +45,6 @@ jobs:
             echo "" >> $GITHUB_OUTPUT
             echo "Please run \`npm run format\` or \`npx prettier --write .\` to fix these issues." >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
-            exit 1
           fi
         continue-on-error: true
 
