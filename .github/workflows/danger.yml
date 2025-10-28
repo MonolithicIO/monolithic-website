@@ -10,7 +10,10 @@ jobs:
     name: Run PR against danger file
 
     permissions:
-      contents: read
+       actions: write
+      checks: write
+      contents: write
+      issues: write
       pull-requests: write
       statuses: write
 
