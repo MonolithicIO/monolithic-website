@@ -10,7 +10,7 @@ jobs:
     name: Run PR against danger file
 
     permissions:
-       actions: write
+      actions: write
       checks: write
       contents: write
       issues: write
