@@ -13,7 +13,7 @@
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "danger": "danger",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
