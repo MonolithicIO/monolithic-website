@@ -1,0 +1,20 @@
+body {
+  background-color: #0d0d0e;
+}
+
+.template-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.template-container h2 {
+  color: #fafafb;
+}
+/* 
+#fafafb branco
+#0d0d0e preto
+#31A1F7 azul
+*/
