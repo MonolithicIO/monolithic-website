@@ -6,7 +6,7 @@ describe("Page", () => {
   it("renders header", () => {
     render(<Page />);
 
-    const header = screen.getByText("Hello, I'm seconde deploy");
+    const header = screen.getByText("Under construction");
     expect(header).toBeInTheDocument;
   });
 });
