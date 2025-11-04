@@ -1,17 +1,18 @@
-import databasePool from "@core/database";
+import { DatabaseProvider } from "@core/database/database.provider";
 import DatabaseHealthModel from "@model/database-health.model";
 import { Pool } from "pg";
 
 export default class DatabaseHealthRepository {
-  private readonly database: Pool;
+  private readonly database: DatabaseProvider;
 
   constructor() {
-    this.database = databasePool;
+    this.database = new DatabaseProvider();
   }
 
   async getDatabaseHealth(): Promise<DatabaseHealthModel | undefined> {
     try {
-      const response = (await databasePool.query(DatabaseHealthRepository.statusQuery)).rows[0];
+      const queryRows = await this.database.query<any>(DatabaseHealthRepository.statusQuery);
+      const response = queryRows[0];
 
       return Promise.resolve({
         isOnline: response.status,
