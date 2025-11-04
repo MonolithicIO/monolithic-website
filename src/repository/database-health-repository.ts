@@ -10,7 +10,6 @@ export default class DatabaseHealthRepository {
   }
 
   async getDatabaseHealth(): Promise<DatabaseHealthModel | undefined> {
-    console.log("hello");
     try {
       const response = (await databasePool.query(DatabaseHealthRepository.statusQuery)).rows[0];
 
