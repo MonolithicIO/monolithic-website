@@ -5,6 +5,10 @@
   "editor.fontLigatures": true,
   "editor.fontSize": 14,
 
+  // Workbench
+  "workbench.iconTheme": "material-icon-theme",
+  "window.zoomLevel": 1,
+
   // Files
   "files.autoSave": "off"
 }
