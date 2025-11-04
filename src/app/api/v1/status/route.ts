@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import databasePool from "../../../../core/database";
+import databasePool from "@core/database";
 
 export async function GET(req: NextRequest) {
   return NextResponse.json({ databaseHealth: checkDatabaseHealth }, { status: 200 });
