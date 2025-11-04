@@ -12,4 +12,7 @@
 
   // Files
   "files.autoSave": "off"
+
+  // Material Icons
+  "material-icon-theme.activeIconPack": "react"
 }
