@@ -3,4 +3,5 @@ export default interface DatabaseHealthModel {
   connectionsAvailable: string;
   openConnections: string;
   latency: [string];
+  version: string;
 }

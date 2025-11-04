@@ -10,14 +10,16 @@ export default class DatabaseHealthRepository {
   }
 
   async getDatabaseHealth(): Promise<DatabaseHealthModel | undefined> {
+    console.log("hello");
     try {
       const response = (await databasePool.query(DatabaseHealthRepository.statusQuery)).rows[0];
 
       return Promise.resolve({
-        isOnline: response.healthy,
+        isOnline: response.status,
         connectionsAvailable: response.connections_available,
         openConnections: response.open_connections,
         latency: response.latency,
+        version: response.version,
       });
     } catch (err) {
       return undefined;
