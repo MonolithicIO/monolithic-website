@@ -14,7 +14,7 @@
     "lint:fix": "prettier --write .",
     "danger": "danger",
     "test": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watchAll"
   },
   "repository": {
     "type": "git",
