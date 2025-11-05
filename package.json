@@ -28,6 +28,7 @@
   "homepage": "https://MonolithicIO/monolithic-website/#readme",
   "dependencies": {
     "@opennextjs/cloudflare": "^1.11.0",
+    "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/postcss": "^4.1.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

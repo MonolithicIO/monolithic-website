@@ -1,5 +1,5 @@
 import Image from "next/image";
-import AppLogo from "../../public/images/logo_light.svg";
+import AppLogo from "../../public/images/monolithic-vertical-light.svg";
 
 export default function Page() {
   return (
