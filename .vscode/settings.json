@@ -11,7 +11,7 @@
   "window.zoomLevel": 1,
 
   // Files
-  "files.autoSave": "off"
+  "files.autoSave": "off",
 
   // Material Icons
   "material-icon-theme.activeIconPack": "react"
