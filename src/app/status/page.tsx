@@ -5,7 +5,6 @@ import NavBar from "@core/components/ui/nav-bar";
 export default function Page() {
   return (
     <>
-      <NavBar />
       <main className="flex min-h-screen flex-col items-start p-16 gap-16">
         <h1 className="text-4xl font-semibold">Service status</h1>
         <section className="flex flex-wrap w-full flex-row gap-16 justify-start">
