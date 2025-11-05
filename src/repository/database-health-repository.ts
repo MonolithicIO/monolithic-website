@@ -9,21 +9,17 @@ export default class DatabaseHealthRepository {
     this.database = new DatabaseProvider();
   }
 
-  async getDatabaseHealth(): Promise<DatabaseHealthModel | undefined> {
-    try {
-      const queryRows = await this.database.query<any>(DatabaseHealthRepository.statusQuery);
-      const response = queryRows[0];
+  async getDatabaseHealth(): Promise<DatabaseHealthModel> {
+    const queryRows = await this.database.query<any>(DatabaseHealthRepository.statusQuery);
+    const response = queryRows[0];
 
-      return Promise.resolve({
-        isOnline: response.status,
-        connectionsAvailable: response.connections_available,
-        openConnections: response.open_connections,
-        latency: response.latency,
-        version: response.version,
-      });
-    } catch (err) {
-      return undefined;
-    }
+    return Promise.resolve({
+      isOnline: response.status,
+      connectionsAvailable: response.connections_available,
+      openConnections: response.open_connections,
+      latency: response.latency,
+      version: response.version,
+    });
   }
 
   private static readonly statusQuery = `

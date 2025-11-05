@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import fs from "fs";
+import { ConnectionOptions } from "tls";
 
 export class DatabaseProvider {
   private static pool = new Pool({
@@ -10,15 +11,15 @@ export class DatabaseProvider {
     password: process.env.DB_PASSWORD,
     max: 20,
     idleTimeoutMillis: 30000,
-    ssl: {
-      rejectUnauthorized: process.env.NODE_ENV === "production",
-      ca: DatabaseProvider.readCertificate(),
-    },
+    ssl: this.readCertificate(),
   });
 
-  private static readCertificate(): string | null {
+  private static readCertificate(): ConnectionOptions | null {
     if (process.env.NODE_ENV == "production") {
-      return process.env.AWS_DB_CERTS;
+      return {
+        rejectUnauthorized: process.env.NODE_ENV === "production",
+        ca: process.env.AWS_DB_CERTS,
+      };
     } else {
       return null;
     }
