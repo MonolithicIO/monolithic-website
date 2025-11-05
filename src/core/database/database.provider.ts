@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { text } from "stream/consumers";
 
 export class DatabaseProvider {
   private static pool = new Pool({
@@ -12,7 +13,10 @@ export class DatabaseProvider {
   });
 
   async query<T = any>(query: string, params?: any[]): Promise<T[]> {
-    const result = await DatabaseProvider.pool.query<T>(query, params);
+    const result = await DatabaseProvider.pool.query<T>({
+      text: query,
+      values: params,
+    });
 
     return result.rows;
   }

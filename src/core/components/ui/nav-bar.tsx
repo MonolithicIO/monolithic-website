@@ -20,7 +20,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-8">
         <div className="flex h-24 items-center justify-between">
           <Image src={isDark ? LightLogo : DarkLogo} alt="Monolithic logo" height={64} className="flex items-center" />
 
