@@ -25,7 +25,8 @@
       "@services/*": ["src/services/*"],
       "@repository/*": ["src/repository/*"],
       "@model/*": ["src/model/*"],
-      "@images/*": ["public/images/*"]
+      "@images/*": ["public/images/*"],
+      "@certs/*": ["certs/*"]
     }
   },
   "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],

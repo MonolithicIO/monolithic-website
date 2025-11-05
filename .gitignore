@@ -25,7 +25,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
+.env*.staging
+.env*.production
+.env*.development
 .env
 
 # vercel
@@ -41,3 +43,6 @@ next-env.d.ts
 
 # docker
 data
+
+# security
+certs
