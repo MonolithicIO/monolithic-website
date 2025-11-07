@@ -1,4 +1,4 @@
-import { Client, Pool } from "pg";
+import { Client, Pool, PoolClient } from "pg";
 import fs from "fs";
 import { ConnectionOptions } from "tls";
 
@@ -32,5 +32,9 @@ export class DatabaseProvider {
     });
 
     return result.rows;
+  }
+
+  getClient(): Promise<PoolClient> {
+    return DatabaseProvider.pool.connect();
   }
 }
