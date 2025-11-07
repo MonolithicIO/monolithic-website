@@ -5,14 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
-    "prod": "NODE_ENV=production && next build && next start",
     "build": "next build",
     "start": "next start",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "danger": "danger",
     "test": "jest --coverage",
-    "test:watch": "jest --watchAll"
+    "test:watch": "jest --watchAll",
+    "migration:create": "node-pg-migrate -m src/core/database/migrations create",
+    "migration:up": "node-pg-migrate -m src/core/database/migrations --envPath .env.development up"
   },
   "repository": {
     "type": "git",
@@ -27,8 +28,10 @@
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/postcss": "^4.1.16",
+    "@types/dotenv": "^6.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
     "lucide-react": "^0.552.0",
     "next": "^15.5.6",
     "next-themes": "^0.4.6",
@@ -37,11 +40,13 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.16"
+    "tailwindcss": "^4.1.16",
+    "node-pg-migrate": "7.9.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "24.9.1",
+    "@types/node-pg-migrate": "^2.3.1",
     "@types/pg": "^8.15.6",
     "@types/react": "19.2.2",
     "danger": "^13.0.4",
