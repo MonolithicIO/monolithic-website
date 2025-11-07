@@ -13,7 +13,7 @@
     "danger": "danger",
     "test": "jest --coverage",
     "test:watch": "jest --watchAll",
-    "migration:create": "node-pg-migrate -j ts create"
+    "migration:create": "node-pg-migrate -j ts --migrations-dir src/core/database/migrations create"
   },
   "repository": {
     "type": "git",
