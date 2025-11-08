@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const runnerConfig: RunnerOption = {
       dbClient: client,
       dryRun: true,
-      dir: resolve("src", "core", "database", "migrations"),
+      dir: resolve(process.cwd(), "src", "core", "database", "migrations"),
       migrationsTable: "pgmigrations",
       direction: "up",
     };
@@ -20,7 +20,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(result, { status: 200 });
   } catch (err) {
-    console.log(err.message);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -33,7 +32,7 @@ export async function POST(req: NextRequest) {
     const runnerConfig: RunnerOption = {
       dbClient: client,
       dryRun: false,
-      dir: join("src", "core", "database", "migrations"),
+      dir: resolve(process.cwd(), "src", "core", "database", "migrations"),
       migrationsTable: "pgmigrations",
       direction: "up",
     };
