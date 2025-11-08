@@ -4,8 +4,8 @@ import DatabaseHealthRepository from "@repository/database-health-repository";
 export default class AppStatusService {
   private readonly databaseRepository: DatabaseHealthRepository;
 
-  constructor() {
-    this.databaseRepository = new DatabaseHealthRepository();
+  constructor(databaseRepository: DatabaseHealthRepository = new DatabaseHealthRepository()) {
+    this.databaseRepository = databaseRepository;
   }
 
   async getAppStatus(): Promise<AppStatusModel> {
