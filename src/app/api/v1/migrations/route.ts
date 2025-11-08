@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const migrationsService = new MigrationsService();
-  const response = await migrationsService.runDryMigrations(req.headers["MigrationToken"]);
+  const response = await migrationsService.runDryMigrations(req.headers.get("MigrationToken"));
 
   if (Array.isArray(response)) {
     return NextResponse.json({
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const migrationsService = new MigrationsService();
-  const response = await migrationsService.runLiveMigrations(req.headers["MigrationToken"]);
+  const response = await migrationsService.runLiveMigrations(req.headers.get("MigrationToken"));
 
   if (Array.isArray(response)) {
     return NextResponse.json({
