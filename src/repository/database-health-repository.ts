@@ -1,6 +1,5 @@
 import { DatabaseProvider } from "@core/database/database.provider";
 import DatabaseHealthModel from "@model/database-health.model";
-import { Pool } from "pg";
 
 export default class DatabaseHealthRepository {
   private readonly database: DatabaseProvider;

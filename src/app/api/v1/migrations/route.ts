@@ -1,7 +1,7 @@
 import { DatabaseProvider } from "@core/database/database.provider";
 import { NextRequest, NextResponse } from "next/server";
 import migrationRunner, { RunnerOption } from "node-pg-migrate";
-import { join, resolve } from "path";
+import { resolve } from "path";
 
 export async function GET(req: NextRequest) {
   const databaseProvider = new DatabaseProvider();
