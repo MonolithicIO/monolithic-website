@@ -5,9 +5,13 @@ export async function GET(req: NextRequest) {
   const migrationsService = new MigrationsService();
   const response = await migrationsService.runDryMigrations(req.headers["MigrationToken"]);
 
+  if (Array.isArray(response)) {
+    return NextResponse.json({
+      message: `${response.length} migrations executed successfully`,
+      migrations: response,
+    });
+  }
   switch (response) {
-    case []:
-      return NextResponse.json(response, { status: 200 });
     case "failure":
       return NextResponse.json({ error: "Could not conclude migrations" }, { status: 500 });
     case "unauthorized":
@@ -19,9 +23,13 @@ export async function POST(req: NextRequest) {
   const migrationsService = new MigrationsService();
   const response = await migrationsService.runLiveMigrations(req.headers["MigrationToken"]);
 
+  if (Array.isArray(response)) {
+    return NextResponse.json({
+      message: `${response.length} migrations executed successfully`,
+      migrations: response,
+    });
+  }
   switch (response) {
-    case []:
-      return NextResponse.json(response, { status: 200 });
     case "failure":
       return NextResponse.json({ error: "Could not conclude migrations" }, { status: 500 });
     case "unauthorized":
