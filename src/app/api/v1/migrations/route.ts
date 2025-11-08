@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const runnerConfig: RunnerOption = {
       dbClient: client,
       dryRun: true,
-      dir: join("src", "core", "database", "migrations"),
+      dir: join(process.cwd(), "src", "core", "database", "migrations"),
       migrationsTable: "pgmigrations",
       direction: "up",
     };
