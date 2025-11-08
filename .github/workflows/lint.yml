@@ -2,7 +2,7 @@ name: Prettier Lint Check
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, staging]
 
 jobs:
   prettier-check:
