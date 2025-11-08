@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const migrationsService = new MigrationsService();
-  const response = await migrationsService.runDryMigrations(req.headers["MigrationToken"]);
+  const response = await migrationsService.runLiveMigrations(req.headers["MigrationToken"]);
 
   switch (response) {
     case []:
