@@ -1,46 +1,30 @@
-import { DatabaseProvider } from "@core/database/database.provider";
+import MigrationsService from "@services/migrations.service";
 import { NextRequest, NextResponse } from "next/server";
-import migrationRunner, { RunnerOption } from "node-pg-migrate";
-import { resolve } from "path";
 
 export async function GET(req: NextRequest) {
-  const databaseProvider = new DatabaseProvider();
-  const client = await databaseProvider.getClient();
+  const migrationsService = new MigrationsService();
+  const response = await migrationsService.runDryMigrations(req.headers["MigrationToken"]);
 
-  try {
-    const runnerConfig: RunnerOption = {
-      dbClient: client,
-      dryRun: true,
-      dir: resolve(process.cwd(), "src", "core", "database", "migrations"),
-      migrationsTable: "pgmigrations",
-      direction: "up",
-    };
-    const result = await migrationRunner(runnerConfig);
-    client.release();
-
-    return NextResponse.json(result, { status: 200 });
-  } catch (err) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  switch (response) {
+    case []:
+      return NextResponse.json(response, { status: 200 });
+    case "failure":
+      return NextResponse.json({ error: "Could not conclude migrations" }, { status: 500 });
+    case "unauthorized":
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }
 
 export async function POST(req: NextRequest) {
-  const databaseProvider = new DatabaseProvider();
-  const client = await databaseProvider.getClient();
+  const migrationsService = new MigrationsService();
+  const response = await migrationsService.runDryMigrations(req.headers["MigrationToken"]);
 
-  try {
-    const runnerConfig: RunnerOption = {
-      dbClient: client,
-      dryRun: false,
-      dir: resolve(process.cwd(), "src", "core", "database", "migrations"),
-      migrationsTable: "pgmigrations",
-      direction: "up",
-    };
-    const result = await migrationRunner(runnerConfig);
-    client.release();
-
-    return NextResponse.json(result, { status: 200 });
-  } catch (err) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  switch (response) {
+    case []:
+      return NextResponse.json(response, { status: 200 });
+    case "failure":
+      return NextResponse.json({ error: "Could not conclude migrations" }, { status: 500 });
+    case "unauthorized":
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }

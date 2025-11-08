@@ -1,6 +1,7 @@
 import { DatabaseProvider } from "@core/database/database.provider";
 import { resolve } from "path";
 import migrationRunner, { RunnerOption } from "node-pg-migrate";
+import ConcludedMigration from "@model/concluded-migration";
 
 export default class MigrationsRepository {
   private readonly databaseProvider: DatabaseProvider;
@@ -9,7 +10,7 @@ export default class MigrationsRepository {
     this.databaseProvider = databaseProvider;
   }
 
-  async runDryMigrations() {
+  async runDryMigrations(): Promise<ConcludedMigration[]> {
     const client = await this.databaseProvider.getClient();
 
     const runnerConfig: RunnerOption = {
@@ -19,11 +20,12 @@ export default class MigrationsRepository {
       migrationsTable: "pgmigrations",
       direction: "up",
     };
-    await migrationRunner(runnerConfig);
+    const response = await migrationRunner(runnerConfig);
     client.release();
+    return response;
   }
 
-  async runLiveMigrations() {
+  async runLiveMigrations(): Promise<ConcludedMigration[]> {
     const client = await this.databaseProvider.getClient();
 
     const runnerConfig: RunnerOption = {
@@ -33,7 +35,8 @@ export default class MigrationsRepository {
       migrationsTable: "pgmigrations",
       direction: "up",
     };
-    await migrationRunner(runnerConfig);
+    const response = await migrationRunner(runnerConfig);
     client.release();
+    return response;
   }
 }

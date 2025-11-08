@@ -1,6 +1,7 @@
+import ConcludedMigration from "@model/concluded-migration";
 import MigrationsRepository from "@repository/migrations.repository";
 
-export type MigrationsResult = "success" | "failure" | "unauthorized";
+type MigrationsResult = ConcludedMigration[] | "failure" | "unauthorized";
 
 export default class MigrationsService {
   private readonly repository: MigrationsRepository;
@@ -15,8 +16,7 @@ export default class MigrationsService {
     }
 
     try {
-      await this.repository.runDryMigrations();
-      return "success";
+      return await this.repository.runDryMigrations();
     } catch (err) {
       this.logMigrationError(err);
       return "failure";
@@ -29,8 +29,7 @@ export default class MigrationsService {
     }
 
     try {
-      await this.repository.runLiveMigrations();
-      return "success";
+      return await this.repository.runLiveMigrations();
     } catch (err) {
       this.logMigrationError(err);
       return "failure";
