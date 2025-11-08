@@ -1,7 +1,7 @@
 import { DatabaseProvider } from "@core/database/database.provider";
 import { NextRequest, NextResponse } from "next/server";
 import migrationRunner, { RunnerOption } from "node-pg-migrate";
-import { join } from "path";
+import { join, resolve } from "path";
 
 export async function GET(req: NextRequest) {
   const databaseProvider = new DatabaseProvider();
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const runnerConfig: RunnerOption = {
       dbClient: client,
       dryRun: true,
-      dir: join(process.cwd(), "src", "core", "database", "migrations"),
+      dir: resolve("src", "core", "database", "migrations"),
       migrationsTable: "pgmigrations",
       direction: "up",
     };
