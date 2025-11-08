@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(result, { status: 200 });
   } catch (err) {
     console.log(err.message);
-    return NextResponse.json({ error: "Could not run migrations" }, { status: 500 });
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
@@ -42,7 +42,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result, { status: 200 });
   } catch (err) {
-    console.log(err.message);
-    return NextResponse.json({ error: "Could not run migrations." }, { status: 500 });
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
