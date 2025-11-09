@@ -1,7 +1,11 @@
 import { DatabaseProvider } from "@core/database/database.provider";
 import DatabaseHealthModel from "@model/database-health.model";
 
-export default class DatabaseHealthRepository {
+export interface DatabaseHealthRepository {
+  getDatabaseHealth(): Promise<DatabaseHealthModel>;
+}
+
+export class DatabaseHealthRepositoryImpl implements DatabaseHealthRepository {
   private readonly database: DatabaseProvider;
 
   constructor() {
@@ -9,7 +13,7 @@ export default class DatabaseHealthRepository {
   }
 
   async getDatabaseHealth(): Promise<DatabaseHealthModel> {
-    const queryRows = await this.database.query<any>(DatabaseHealthRepository.statusQuery);
+    const queryRows = await this.database.query<any>(DatabaseHealthRepositoryImpl.statusQuery);
     const response = queryRows[0];
 
     return Promise.resolve({

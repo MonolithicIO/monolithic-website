@@ -1,10 +1,10 @@
 import { AppStatusModel } from "@model/app-status.model";
-import DatabaseHealthRepository from "@repository/database-health-repository";
+import { DatabaseHealthRepository, DatabaseHealthRepositoryImpl } from "@repository/database-health.repository";
 
 export default class AppStatusService {
   private readonly databaseRepository: DatabaseHealthRepository;
 
-  constructor(databaseRepository: DatabaseHealthRepository = new DatabaseHealthRepository()) {
+  constructor(databaseRepository: DatabaseHealthRepository = new DatabaseHealthRepositoryImpl()) {
     this.databaseRepository = databaseRepository;
   }
 

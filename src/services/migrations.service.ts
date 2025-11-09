@@ -1,12 +1,12 @@
 import ConcludedMigration from "@model/concluded-migration";
-import MigrationsRepository from "@repository/migrations.repository";
+import { MigrationsRepository, MigrationsRepositoryImpl } from "@repository/migrations.repository";
 
 type MigrationsResult = ConcludedMigration[] | "failure" | "unauthorized";
 
 export default class MigrationsService {
   private readonly repository: MigrationsRepository;
 
-  constructor(repository: MigrationsRepository = new MigrationsRepository()) {
+  constructor(repository: MigrationsRepository = new MigrationsRepositoryImpl()) {
     this.repository = repository;
   }
 
