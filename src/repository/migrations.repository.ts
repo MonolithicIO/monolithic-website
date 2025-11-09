@@ -3,7 +3,12 @@ import { resolve } from "path";
 import migrationRunner, { RunnerOption } from "node-pg-migrate";
 import ConcludedMigration from "@model/concluded-migration";
 
-export default class MigrationsRepository {
+export interface IMigrationsRepository {
+  runDryMigrations(): Promise<ConcludedMigration[]>;
+  runLiveMigrations(): Promise<ConcludedMigration[]>;
+}
+
+export class MigrationsRepository implements IMigrationsRepository {
   private readonly databaseProvider: DatabaseProvider;
 
   constructor(databaseProvider: DatabaseProvider = new DatabaseProvider()) {
