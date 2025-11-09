@@ -2,7 +2,7 @@ import MigrationsService from "@services/migrations.service";
 import ConcludedMigration from "@model/concluded-migration";
 import MigrationsRepositoryMock from "tests/mock/repository/migrations.repository.mock";
 
-describe("MigrationsService", () => {
+describe("MigrationsServiceImpl", () => {
   let service: MigrationsService;
   let mockRepository: MigrationsRepositoryMock;
   const originalEnv = process.env;
