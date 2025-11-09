@@ -1,8 +1,8 @@
 import ConcludedMigration from "@model/concluded-migration";
-import { IMigrationsRepository } from "@repository/migrations.repository";
+import { MigrationsRepository } from "@repository/migrations.repository";
 import { error } from "console";
 
-export default class MigrationsRepositoryMock implements IMigrationsRepository {
+export default class MigrationsRepositoryMock implements MigrationsRepository {
   dryResponse: ConcludedMigration[] | Error;
   liveResponse: ConcludedMigration[] | Error;
 
