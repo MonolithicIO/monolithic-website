@@ -12,6 +12,10 @@
     "danger": "danger",
     "test": "jest --coverage",
     "test:watch": "jest --watchAll",
+    "test:unit": "jest --testPathPattern=tests/unit --coverage",
+    "test:unit:watch": "jest --testPathPattern=tests/unit --watch",
+    "test:integration": "jest --testPathPattern=tests/integration --coverage",
+    "test:integration:watch": "jest --testPathPattern=tests/integration --watch",
     "migration:create": "node-pg-migrate -m src/core/database/migrations create",
     "migration:up": "node-pg-migrate -m src/core/database/migrations --envPath .env.development up"
   },
