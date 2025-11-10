@@ -19,7 +19,7 @@
     "test:integration:ephemeral": "npm run docker:down && npm run dev && npm run test:integration && npm run docker:down",
     "migration:create": "node-pg-migrate -m src/core/database/migrations create",
     "migration:up": "node-pg-migrate -m src/core/database/migrations --envPath .env.development up",
-    "wait:containers": "node tests/scripts/wait-containers.js",
+    "wait:containers": "node tests/scripts/wait-containers.ts",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down -v"
   },
