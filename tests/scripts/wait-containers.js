@@ -7,7 +7,7 @@ const execAsync = promisify(exec);
 const containers = [
   {
     containerName: "postgres-db",
-    command: "docker exec postgres-db pg_isready",
+    command: "docker exec postgres-db pg_isready --host localhost",
     successOutput: "accepting connections",
   },
 ];
