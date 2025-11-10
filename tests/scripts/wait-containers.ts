@@ -37,7 +37,7 @@ async function waitContainer(container, maxAttempts = maxRetryAttempts) {
   throw new Error(`Container ${containerName} failed to initialize after ${maxAttempts} attempts`);
 }
 
-async function waitContainers() {
+export async function waitContainers() {
   console.log("🚀 Waiting for containers to be ready...\n");
 
   const promises = containers.map(container => waitContainer(container));
