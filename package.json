@@ -4,7 +4,7 @@
   "description": "Website for Engineering @ Monolithic",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run docker:up && npm run wait:containers && npm run migration:up && next dev",
     "build": "next build",
     "start": "next start",
     "lint:check": "prettier --check .",
@@ -17,7 +17,9 @@
     "test:integration": "jest --testPathPattern=tests/integration --coverage",
     "test:integration:watch": "jest --testPathPattern=tests/integration --watch",
     "migration:create": "node-pg-migrate -m src/core/database/migrations create",
-    "migration:up": "node-pg-migrate -m src/core/database/migrations --envPath .env.development up"
+    "migration:up": "node-pg-migrate -m src/core/database/migrations --envPath .env.development up",
+    "wait:containers": "node tests/scripts/wait-containers.js",
+    "docker:up": "docker compose up -d"
   },
   "repository": {
     "type": "git",
