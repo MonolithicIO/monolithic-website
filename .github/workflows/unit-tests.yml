@@ -43,5 +43,5 @@ jobs:
       - name: Post coverage report
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          coverage-file: coverage/coverage/lcov.info
+          coverage-file: coverage/lcov.info
           custom-title: Unit test coverage report
