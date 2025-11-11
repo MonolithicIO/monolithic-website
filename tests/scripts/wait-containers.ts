@@ -15,7 +15,11 @@ const containers: ContainerConfig[] = [
   },
 ];
 
-async function waitContainer(container: ContainerConfig) {
+async function waitContainer(container: ContainerConfig, maxRetries: number, currentRetry: number) {
+  if (currentRetry > maxRetries) {
+    throw Error(`Failed to wait for container ${container}. Max attempts reached ${maxRetries}`);
+  }
+
   const { containerName, command, successOutput } = container;
   console.log(`🟡 ${containerName} - waiting`);
   exec(command, handleExec);
@@ -23,7 +27,7 @@ async function waitContainer(container: ContainerConfig) {
   function handleExec(error: any, stdout: string) {
     process.stdout.write(stdout);
     if (stdout.search(successOutput) === -1) {
-      return waitContainer(container);
+      return waitContainer(container, maxRetries, currentRetry + 1);
     }
     console.log(`\r🟢 ${containerName} - ready\n`);
   }
@@ -32,7 +36,7 @@ async function waitContainer(container: ContainerConfig) {
 async function waitContainers(): Promise<void> {
   console.log("🚀 Waiting for containers to be ready...\n");
 
-  const promises = containers.map(container => waitContainer(container));
+  const promises = containers.map(container => waitContainer(container, 50, 0));
 
   try {
     await Promise.all(promises);
