@@ -1,4 +1,4 @@
-name: Run unit tests
+name: Run Integration tests
 
 on:
   pull_request:
@@ -34,5 +34,5 @@ jobs:
       - name: install dependencies
         run: npm ci
 
-      - name: run unit tests
-        run: npm  test:integration:ephemeral
+      - name: run integration tests
+        run: npm run test:integration:ephemeral
