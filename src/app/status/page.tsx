@@ -1,6 +1,5 @@
 import { Badge } from "@core/components/ui/badge";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@core/components/ui/card";
-import NavBar from "@core/components/ui/nav-bar";
 
 export default function Page() {
   return (
