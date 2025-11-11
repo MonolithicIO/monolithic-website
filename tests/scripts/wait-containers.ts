@@ -1,7 +1,4 @@
 import { exec } from "node:child_process";
-import { promisify } from "util";
-
-const execAsync = promisify(exec);
 
 interface ContainerConfig {
   containerName: string;
@@ -18,31 +15,18 @@ const containers: ContainerConfig[] = [
   },
 ];
 
-const retryDelay = 1000;
-const maxRetryAttempts = 50;
-
-async function waitContainer(container: ContainerConfig, maxAttempts: number = maxRetryAttempts): Promise<boolean> {
+async function waitContainer(container: ContainerConfig) {
   const { containerName, command, successOutput } = container;
   console.log(`🟡 ${containerName} - waiting`);
+  exec(command, handleExec);
 
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const { stdout } = (await execAsync(command)) as { stdout: string; stderr: string };
-
-      if (stdout.includes(successOutput)) {
-        process.stdout.write(`\r🟢 ${containerName} - ready\n`);
-        return true;
-      }
-    } catch (error) {
-      // No-op. Container may not be ready.
+  function handleExec(error: any, stdout: string) {
+    if (stdout.search(successOutput) === -1) {
+      process.stdout.write(`🟡 ${containerName} - waiting`);
+      return waitContainer(container);
     }
-
-    if (attempt < maxAttempts) {
-      await new Promise<void>(resolve => setTimeout(resolve, retryDelay));
-    }
+    process.stdout.write(`\r🟢 ${containerName} - ready\n`);
   }
-
-  throw new Error(`Container ${containerName} failed to initialize after ${maxAttempts} attempts`);
 }
 
 async function waitContainers(): Promise<void> {
