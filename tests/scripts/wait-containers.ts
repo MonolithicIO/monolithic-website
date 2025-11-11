@@ -49,6 +49,6 @@ async function waitContainers(): Promise<void> {
 }
 
 // Run if executed directly
-waitContainers().catch((error: unknown) => {
+waitContainers().catch(() => {
   process.exit(1);
 });

@@ -3,6 +3,7 @@ import "./global.css";
 import { ThemeProvider } from "next-themes";
 import NavBar from "@core/components/ui/nav-bar";
 import { Metadata } from "next";
+import React from "react";
 
 const inter = Inter({
   subsets: ["latin"],
