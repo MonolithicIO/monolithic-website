@@ -22,25 +22,7 @@ jobs:
       - name: install dependencies
         run: npm ci
 
-      - name: run unit tests (with coverage)
-        run: npm run test:unit
-
-      - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-unit
-          path: |
-            coverage/coverage-final.json
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Download coverage artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-unit
-
       - name: Post coverage report
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          coverage-file: coverage/lcov.info
-          custom-title: Unit test coverage report
+          test-script: npm run test:unit
