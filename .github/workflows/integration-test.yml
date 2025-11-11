@@ -1,13 +1,8 @@
-name: Run unit tests
+name: Run Integration tests
 
 on:
   pull_request:
     branches: [main]
-
-permissions:
-  contents: read
-  pull-requests: write
-  checks: write
 
 jobs:
   jest-run:
@@ -23,7 +18,5 @@ jobs:
       - name: install dependencies
         run: npm ci
 
-      - name: Post coverage report
-        uses: ArtiomTr/jest-coverage-report-action@v2
-        with:
-          test-script: npm run test:unit
+      - name: run integration tests
+        run: npm run test:integration:ephemeral
