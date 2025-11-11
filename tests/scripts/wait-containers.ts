@@ -21,11 +21,11 @@ async function waitContainer(container: ContainerConfig) {
   exec(command, handleExec);
 
   function handleExec(error: any, stdout: string) {
+    process.stdout.write(stdout);
     if (stdout.search(successOutput) === -1) {
-      process.stdout.write(`🟡 ${containerName} - waiting`);
       return waitContainer(container);
     }
-    process.stdout.write(`\r🟢 ${containerName} - ready\n`);
+    console.log(`\r🟢 ${containerName} - ready\n`);
   }
 }
 
