@@ -18,7 +18,7 @@ const containers: ContainerConfig[] = [
   },
 ];
 
-const retryDelay = 200;
+const retryDelay = 1000;
 const maxRetryAttempts = 50;
 
 async function waitContainer(container: ContainerConfig, maxAttempts: number = maxRetryAttempts): Promise<boolean> {
