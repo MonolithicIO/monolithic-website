@@ -30,8 +30,7 @@ jobs:
         with:
           name: coverage-unit
           path: |
-            coverage/
-            coverage/lcov.info
+            coverage/coverage-final.json
           if-no-files-found: error
           retention-days: 7
 
