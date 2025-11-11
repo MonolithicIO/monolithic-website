@@ -1,11 +1,11 @@
-name: Prettier Lint Check
+name: Eslint Lint Check
 
 on:
   pull_request:
     branches: [main]
 
 jobs:
-  prettier-check:
+  eslint-check:
     runs-on: ubuntu-latest
     permissions:
       contents: read
