@@ -1,11 +1,11 @@
-name: Prettier Lint Check
+name: Eslint Lint Check
 
 on:
   pull_request:
     branches: [main]
 
 jobs:
-  prettier-check:
+  eslint-check:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,27 +23,27 @@ jobs:
         run: npm ci
 
       - name: Run Prettier check
-        id: prettier
+        id: eslint
         run: |
           set +e
-          npx prettier --check . 2>&1 | tee prettier-output.txt
-          PRETTIER_EXIT_CODE=${PIPESTATUS[0]}
+          npm run lint:eslint . 2>&1 | tee ESLINT-output.txt
+          ESLINT_EXIT_CODE=${PIPESTATUS[0]}
           set -e
 
-          if [ $PRETTIER_EXIT_CODE -eq 0 ]; then
+          if [ $ESLINT_EXIT_CODE -eq 0 ]; then
             echo "status=success" >> $GITHUB_OUTPUT
             echo "message=✅ All files are formatted correctly!" >> $GITHUB_OUTPUT
           else
             echo "status=failure" >> $GITHUB_OUTPUT
-            ERROR_MESSAGE=$(cat prettier-output.txt)
+            ERROR_MESSAGE=$(cat ESLINT-output.txt)
             # Escape and format the error message for GitHub output
             echo "message<<EOF" >> $GITHUB_OUTPUT
-            echo "❌ Prettier formatting issues found:" >> $GITHUB_OUTPUT
+            echo "❌ Eslint formatting issues found:" >> $GITHUB_OUTPUT
             echo "\`\`\`" >> $GITHUB_OUTPUT
             echo "$ERROR_MESSAGE" >> $GITHUB_OUTPUT
             echo "\`\`\`" >> $GITHUB_OUTPUT
             echo "" >> $GITHUB_OUTPUT
-            echo "Please run \`npm run format\` or \`npx prettier --write .\` to fix these issues." >> $GITHUB_OUTPUT
+            echo "PR will remain blocked from merging until issues are fixed." >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
           fi
         continue-on-error: true
@@ -55,7 +55,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: "github-actions[bot]"
-          body-includes: "Prettier Lint Check"
+          body-includes: "Eslint Lint Check"
 
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v4
@@ -65,13 +65,13 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
           body: |
-            ## Prettier Lint Check
+            ## Eslint Lint Check
 
-            ${{ steps.prettier.outputs.message }}
+            ${{ steps.eslint.outputs.message }}
 
             ---
             *Run ID: ${{ github.run_id }} | Commit: ${{ github.sha }}*
 
       - name: Fail workflow if prettier check failed
-        if: steps.prettier.outputs.status == 'failure'
+        if: steps.eslint.outputs.status == 'failure'
         run: exit 1

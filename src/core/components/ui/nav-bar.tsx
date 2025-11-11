@@ -1,6 +1,5 @@
 "use client";
-import { useState } from "react";
-import { Menu, X, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import Image from "next/image";
 import LightLogo from "@images/monolithic-horizontal-light.svg";
 import DarkLogo from "@images/monolithic-horizontal-dark.svg";

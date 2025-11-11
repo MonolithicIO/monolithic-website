@@ -14,5 +14,7 @@
   "files.autoSave": "off",
 
   // Material Icons
-  "material-icon-theme.activeIconPack": "react"
+  "material-icon-theme.activeIconPack": "react",
+
+  "eslint.validate": ["javascriptreact", "typescriptreact", "typescript", "javascript", "html"]
 }

@@ -1,5 +1,4 @@
-import { Client, Pool, PoolClient } from "pg";
-import fs from "fs";
+import { Pool, PoolClient } from "pg";
 import { ConnectionOptions } from "tls";
 
 export class DatabaseProvider {
