@@ -27,7 +27,8 @@ export default class AppStatusService {
   private async getDatabaseHealth(): Promise<DatabaseHealthModel> {
     try {
       return await this.databaseRepository.getDatabaseHealth();
-    } catch {
+    } catch (err) {
+      console.log(err);
       return {
         isOnline: false,
         connectionsAvailable: "n/a",
