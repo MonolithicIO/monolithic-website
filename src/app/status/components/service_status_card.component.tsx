@@ -13,12 +13,10 @@ export interface ServiceStatus {
     icon: LucideIcon;
     title: string;
     value: string;
-    trailing:
-      | {
-          label: string;
-          value: string;
-        }
-      | undefined;
+    trailing: {
+      label: string;
+      value: string;
+    } | null;
   }[];
 }
 

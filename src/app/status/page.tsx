@@ -31,7 +31,7 @@ export default function Page() {
                 icon: Clock,
                 title: "Latency",
                 value: "5ms -- 5ms -- 5ms",
-                trailing: undefined,
+                trailing: null,
               },
             ],
           }}
