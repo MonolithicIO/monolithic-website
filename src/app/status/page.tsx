@@ -1,28 +1,41 @@
-import { Badge } from "@core/components/ui/badge";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@core/components/ui/card";
+import ServiceStatusCard from "./components/service_status_card.component";
+import { Clock, Database, Server } from "lucide-react";
 
 export default function Page() {
   return (
     <>
       <main className="flex min-h-screen flex-col items-start p-16 gap-16">
         <h1 className="text-4xl font-semibold">Service status</h1>
-        <section className="flex flex-wrap w-full flex-row gap-16 justify-start">
-          <Card className="w-full sm:w-64 md:w-80 lg:w-96">
-            <CardHeader>
-              <CardTitle>Database Health</CardTitle>
-              <CardDescription>Postgre Status</CardDescription>
-              <CardAction>
-                <Badge variant="positive">Online</Badge>
-              </CardAction>
-            </CardHeader>
-            <CardContent>
-              <p>Connections: 94</p>
-              <p>Open connections: 6</p>
-              <p>Latency: 5, 5, 5</p>
-              <p>Version: 17.5</p>
-            </CardContent>
-          </Card>
-        </section>
+
+        <ServiceStatusCard
+          data={{
+            title: "Database health",
+            status: "online",
+            header: {
+              title: "Postgres status",
+              description: "Version",
+              value: "17.5",
+              icon: Database,
+            },
+            content: [
+              {
+                icon: Server,
+                title: "Connections",
+                value: "20",
+                trailing: {
+                  label: "open",
+                  value: "20",
+                },
+              },
+              {
+                icon: Clock,
+                title: "Latency",
+                value: "5ms -- 5ms -- 5ms",
+                trailing: undefined,
+              },
+            ],
+          }}
+        />
       </main>
     </>
   );

@@ -2,68 +2,80 @@ import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@core/components/ui/card";
 import { Badge } from "@core/components/ui/badge";
 import { Separator } from "@core/components/ui/separator";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@core/components/ui/tooltip";
-import { Server, Database, Clock, Info } from "lucide-react";
+// import { Tooltip, TooltipTrigger, TooltipContent } from "@core/components/ui/tooltip";
+import { LucideIcon } from "lucide-react";
 
-export interface DatabaseHealthModel {
-  isOnline: boolean;
-  connectionsAvailable: string;
-  openConnections: string;
-  latency: string[];
-  version?: string;
+export interface ServiceStatus {
+  title: string;
+  status: "online" | "offline";
+  header: { title: string; description: string; value: string; icon: LucideIcon };
+  content: {
+    icon: LucideIcon;
+    title: string;
+    value: string;
+    trailing:
+      | {
+          label: string;
+          value: string;
+        }
+      | undefined;
+  }[];
 }
 
-// Allow the `data` prop to be optional and provide sensible defaults so the
-// component doesn't crash when `data` is undefined (common during initial
-// render or if parent forgot to pass it).
 type Props = {
-  data?: Partial<DatabaseHealthModel> | null;
-  /** Optional loading state to show placeholders */
-  loading?: boolean;
+  data: ServiceStatus;
 };
 
-const DEFAULT_DATA: DatabaseHealthModel = {
-  isOnline: false,
-  connectionsAvailable: "—",
-  openConnections: "—",
-  latency: [],
-  version: undefined,
-};
-
-export default function DatabaseHealthCard({ data, loading = false }: Props) {
-  // merge provided data with defaults to avoid accessing properties on undefined
-  const merged: DatabaseHealthModel = { ...DEFAULT_DATA, ...(data ?? {}) } as DatabaseHealthModel;
-
-  // compute status color based on real data
-  const statusColor = merged.isOnline ? "bg-green-600/90 text-white" : "bg-red-600/90 text-white";
+export default function ServiceStatusCard({ data }: Props) {
+  const statusBadge = data.status === "online" ? "positive" : "destructive";
 
   return (
     <Card className="w-full max-w-sm rounded-2xl shadow-lg border border-gray-700">
-      <CardHeader className="flex items-start justify-between gap-4">
+      <CardHeader className="flex items-start justify-between">
         <div>
-          <CardTitle className="text-sm md:text-base">Database Health</CardTitle>
+          <CardTitle className="text-sm md:text-base">{data.title}</CardTitle>
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge className={`px-3 py-1 rounded-full font-medium ${statusColor}`}>
-            {loading ? "Loading..." : merged.isOnline ? "Online" : "Offline"}
+          <Badge className={`px-3 py-1 rounded-full font-medium`} variant={statusBadge}>
+            {data.status === "online" ? "Online" : "Offline"}
           </Badge>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-2">
+      <CardContent className="pt-2 ">
         <div className="flex items-center gap-3 mb-3 text-sm text-muted-foreground">
-          <Database className="w-4 h-4 opacity-80" />
+          <data.header.icon className="w-5 h-5" />
           <div className="flex flex-col">
-            <span className="text-xs">Postgre Status</span>
-            <span className="text-sm font-medium">Version {loading ? "..." : (merged.version ?? "—")}</span>
+            <span className="text-xs">{data.header.title}</span>
+            <span className="text-sm font-medium">
+              {data.header.description} {data.header.value}
+            </span>
           </div>
         </div>
 
-        <Separator className="my-2" />
+        <Separator className="my-2 my-4" />
 
-        <ul className="space-y-3">
-          <li className="flex items-center justify-between">
+        <ul className="space-y-5">
+          {data.content.map(item => (
+            <li key={item.title} className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <item.icon className="w-5 h-5" />
+                <div>
+                  <p className="text-xs text-muted-foreground">{item.title}</p>
+                  <p className="font-medium">{item.value}</p>
+                </div>
+              </div>
+
+              {item.trailing && (
+                <div className="text-xs text-muted-foreground">
+                  {item.trailing.label}: {item.trailing.value}
+                </div>
+              )}
+            </li>
+          ))}
+
+          {/* <li className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Server className="w-4 h-4 opacity-80" />
               <div>
@@ -112,12 +124,8 @@ export default function DatabaseHealthCard({ data, loading = false }: Props) {
                 <p className="text-xs">Connections include pooled + active. Latency shows recent samples.</p>
               </TooltipContent>
             </Tooltip>
-          </li>
+          </li> */}
         </ul>
-
-        <div className="mt-4 flex items-center justify-end">
-          <button className="text-xs px-3 py-1 rounded-lg border border-gray-700">Refresh</button>
-        </div>
       </CardContent>
     </Card>
   );
