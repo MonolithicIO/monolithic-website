@@ -4,7 +4,7 @@ import { Clock, Database, Server } from "lucide-react";
 export default function Page() {
   return (
     <>
-      <main className="flex min-h-screen flex-col items-start p-16 gap-16">
+      <main className="flex min-h-screen flex-col items-start p-16 gap-8">
         <h1 className="text-4xl font-semibold">Service status</h1>
 
         <ServiceStatusCard
