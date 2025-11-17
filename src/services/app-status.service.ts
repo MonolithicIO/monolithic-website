@@ -13,6 +13,7 @@ export default class AppStatusService {
 
     return Promise.resolve({
       databaseHealth: databaseStatus,
+      updatedAt: new Date(),
     });
   }
 }
