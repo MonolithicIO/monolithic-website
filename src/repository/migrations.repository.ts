@@ -1,7 +1,7 @@
 import { DatabaseProvider } from "@core/database/database.provider";
 import { resolve } from "path";
 import migrationRunner, { RunnerOption } from "node-pg-migrate";
-import ConcludedMigration from "@model/concluded-migration";
+import ConcludedMigration from "@model/concluded-migration.model";
 
 export interface MigrationsRepository {
   runDryMigrations(): Promise<ConcludedMigration[]>;

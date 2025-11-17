@@ -1,4 +1,4 @@
-import ConcludedMigration from "@model/concluded-migration";
+import ConcludedMigration from "@model/concluded-migration.model";
 import { MigrationsRepository } from "@repository/migrations.repository";
 import { error } from "console";
 

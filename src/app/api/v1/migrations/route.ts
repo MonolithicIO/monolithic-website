@@ -1,9 +1,10 @@
+import { createHandler } from "@core/api/api-handler";
 import MigrationsService from "@services/migrations.service";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export const GET = createHandler([], async context => {
   const migrationsService = new MigrationsService();
-  const response = await migrationsService.runDryMigrations(req.headers.get("MigrationToken"));
+  const response = await migrationsService.runDryMigrations(context.request.headers.get("MigrationToken"));
 
   if (Array.isArray(response)) {
     return NextResponse.json({
@@ -17,11 +18,11 @@ export async function GET(req: NextRequest) {
     case "unauthorized":
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-}
+});
 
-export async function POST(req: NextRequest) {
+export const POST = createHandler([], async context => {
   const migrationsService = new MigrationsService();
-  const response = await migrationsService.runLiveMigrations(req.headers.get("MigrationToken"));
+  const response = await migrationsService.runLiveMigrations(context.request.headers.get("MigrationToken"));
 
   if (Array.isArray(response)) {
     return NextResponse.json({
@@ -35,4 +36,4 @@ export async function POST(req: NextRequest) {
     case "unauthorized":
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-}
+});

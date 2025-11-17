@@ -27,7 +27,8 @@
       "@model/*": ["src/model/*"],
       "@images/*": ["public/images/*"],
       "@certs/*": ["certs/*"],
-      "@mocks/*": ["tests/mock/*"]
+      "@mocks/*": ["tests/mock/*"],
+      "@errors/*": ["src/errors/*"]
     }
   },
   "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
