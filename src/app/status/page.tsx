@@ -8,33 +8,31 @@ export default function Page() {
         <h1 className="text-4xl font-semibold">Service status</h1>
 
         <ServiceStatusCard
-          data={{
-            title: "Database health",
-            status: "online",
-            header: {
-              title: "Postgres status",
-              description: "Version",
-              value: "17.5",
-              icon: Database,
-            },
-            content: [
-              {
-                icon: Server,
-                title: "Connections",
-                value: "20",
-                trailing: {
-                  label: "open",
-                  value: "20",
-                },
-              },
-              {
-                icon: Clock,
-                title: "Latency",
-                value: "5ms -- 5ms -- 5ms",
-                trailing: null,
-              },
-            ],
+          title="Database health"
+          status="online"
+          header={{
+            title: "Postgres status",
+            description: "Version",
+            value: "17.5",
+            icon: Database,
           }}
+          content={[
+            {
+              icon: Server,
+              title: "Connections",
+              value: "20",
+              trailing: {
+                label: "open",
+                value: "20",
+              },
+            },
+            {
+              icon: Clock,
+              title: "Latency",
+              value: "5ms -- 5ms -- 5ms",
+              trailing: null,
+            },
+          ]}
         />
       </main>
     </>
