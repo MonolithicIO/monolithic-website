@@ -7,7 +7,7 @@ type LastUpdatedStatusProps = {
   timestamp?: string | Date | null;
 };
 
-export default function LastUpdatedStatus({ timestamp }: LastUpdatedStatusProps) {
+export default function ServiceStatusUpdatedAt({ timestamp }: LastUpdatedStatusProps) {
   const formatted = React.useMemo(() => {
     if (!timestamp) return "—";
     const d = typeof timestamp === "string" ? new Date(timestamp) : timestamp;
@@ -24,7 +24,9 @@ export default function LastUpdatedStatus({ timestamp }: LastUpdatedStatusProps)
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Badge className="px-3 py-1 text-xs rounded-full bg-muted">{formatted}</Badge>
+        <Badge className="px-3 py-1 text-xs rounded-full" variant="default">
+          {formatted}
+        </Badge>
       </CardContent>
     </Card>
   );
