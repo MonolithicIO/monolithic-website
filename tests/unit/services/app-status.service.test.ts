@@ -20,11 +20,16 @@ describe("AppStatusServiceImpl", () => {
       expect(response.databaseHealth).toBe(healthResponse);
     });
 
-    test("should propagate repository exceptions", async () => {
+    test("should return failed model if database check fails", async () => {
       const healthResponse = new Error("Sample");
       databaseHealthRepository.response = healthResponse;
+      const result = await service.getAppStatus();
 
-      await expect(service.getAppStatus()).rejects.toThrow();
+      expect(result.databaseHealth.isOnline).toBe(false);
+      expect(result.databaseHealth.connectionsAvailable).toBe("n/a");
+      expect(result.databaseHealth.openConnections).toBe("n/a");
+      expect(result.databaseHealth.latency.length).toBe(3);
+      expect(result.databaseHealth.version).toBe("n/a");
     });
   });
 });
