@@ -1,5 +1,6 @@
 import { DateProvider, DateProviderImpl } from "@core/providers/date.provider";
 import { AppStatusModel } from "@model/app-status.model";
+import DatabaseHealthModel from "@model/database-health.model";
 import { DatabaseHealthRepository, DatabaseHealthRepositoryImpl } from "@repository/database-health.repository";
 
 export default class AppStatusService {
@@ -15,11 +16,25 @@ export default class AppStatusService {
   }
 
   async getAppStatus(): Promise<AppStatusModel> {
-    const databaseStatus = await this.databaseRepository.getDatabaseHealth();
+    const databaseStatus = await this.getDatabaseHealth();
 
-    return Promise.resolve({
+    return {
       databaseHealth: databaseStatus,
       updatedAt: this.dateProvider.now(),
-    });
+    };
+  }
+
+  private async getDatabaseHealth(): Promise<DatabaseHealthModel> {
+    try {
+      return await this.databaseRepository.getDatabaseHealth();
+    } catch {
+      return {
+        isOnline: false,
+        connectionsAvailable: "n/a",
+        openConnections: "n/a",
+        latency: ["9999ms", "9999ms", "9999ms"],
+        version: "n/a",
+      };
+    }
   }
 }
