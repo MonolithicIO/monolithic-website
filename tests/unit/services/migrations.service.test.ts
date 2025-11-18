@@ -1,5 +1,5 @@
 import MigrationsService from "@services/migrations.service";
-import ConcludedMigration from "@model/concluded-migration";
+import ConcludedMigration from "@model/concluded-migration.model";
 import MigrationsRepositoryMock from "tests/mock/repository/migrations.repository.mock";
 
 describe("MigrationsServiceImpl", () => {

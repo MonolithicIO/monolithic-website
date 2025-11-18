@@ -1,4 +1,4 @@
-import ConcludedMigration from "@model/concluded-migration";
+import ConcludedMigration from "@model/concluded-migration.model";
 import { MigrationsRepository, MigrationsRepositoryImpl } from "@repository/migrations.repository";
 
 export type MigrationsResult = ConcludedMigration[] | "failure" | "unauthorized";
