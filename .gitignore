@@ -27,6 +27,7 @@ yarn-error.log*
 # local env files
 .env*.staging
 .env*.production
+.env*.development
 .env
 
 # vercel
@@ -45,3 +46,9 @@ data
 
 # security
 certs
+
+# firebase
+.firebaserc
+firebase.json
+firebase-debug.log
+emulator-data
