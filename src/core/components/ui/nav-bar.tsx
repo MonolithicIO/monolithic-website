@@ -4,10 +4,15 @@ import Image from "next/image";
 import LightLogo from "@images/monolithic-horizontal-light.svg";
 import DarkLogo from "@images/monolithic-horizontal-dark.svg";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
+import { Button } from "./button";
+import Link from "next/link";
 
 export default function Navbar() {
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme == "dark";
+  const pathName = usePathname();
+  const showLoginButtons = !["/login", "/sign-up"].includes(pathName);
 
   const toggleTheme = () => {
     if (isDark) {
@@ -26,6 +31,7 @@ export default function Navbar() {
           {/* Mark: Right Side Actions */}
           <div className="flex items-center gap-2">
             {/* Mark: Theme Toggle */}
+            {showLoginButtons && <LoginButtons />}
             <button
               onClick={toggleTheme}
               className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
@@ -37,5 +43,18 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
+  );
+}
+
+function LoginButtons() {
+  return (
+    <div className="flex flex-row gap-4">
+      <Button variant="outline">
+        <Link href={"login"}>Log in</Link>
+      </Button>
+      <Button>
+        <Link href={"sign-up"}>Sign up</Link>
+      </Button>
+    </div>
   );
 }
