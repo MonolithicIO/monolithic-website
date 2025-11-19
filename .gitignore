@@ -50,3 +50,5 @@ certs
 # firebase
 .firebaserc
 firebase.json
+firebase-debug.log
+emulator-data
