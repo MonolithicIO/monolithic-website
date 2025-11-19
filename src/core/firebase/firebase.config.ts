@@ -1,4 +1,5 @@
 import { initializeApp, FirebaseOptions, getApps, getApp } from "firebase/app";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -10,3 +11,7 @@ const firebaseConfig: FirebaseOptions = {
 const firebaseApp = getApps.length > 0 ? getApp() : initializeApp(firebaseConfig);
 
 export default firebaseApp;
+
+if (process.env.NODE_ENV === "development") {
+  connectAuthEmulator(getAuth(firebaseApp), "http://127.0.0.1:9099");
+}
