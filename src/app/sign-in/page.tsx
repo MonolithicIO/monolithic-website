@@ -26,6 +26,7 @@ export default function SignInPage(): JSX.Element {
     setLoading(true);
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
+      alert(`Signed in with email ${cred.user.email}`);
     } catch (err: any) {
       setError(parseFirebaseError(err));
     } finally {
@@ -38,7 +39,8 @@ export default function SignInPage(): JSX.Element {
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const credential = await signInWithPopup(auth, provider);
+      alert(`Signed in with email ${credential.user.email}`);
     } catch (err: any) {
       setError(parseFirebaseError(err));
     } finally {
@@ -56,7 +58,9 @@ export default function SignInPage(): JSX.Element {
         <CardContent>
           <form onSubmit={handleEmailSignIn} className="space-y-4">
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label className="my-2" htmlFor="email">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -69,7 +73,9 @@ export default function SignInPage(): JSX.Element {
             </div>
 
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label className="my-2" htmlFor="password">
+                Password
+              </Label>
               <Input
                 id="password"
                 type="password"
