@@ -1,14 +1,17 @@
 "use client";
 
 import React, { JSX, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@core/components/ui/card";
 import { Button } from "@core/components/ui/button";
 import { Input } from "@core/components/ui/input";
 import { Label } from "@core/components/ui/label";
 import firebaseApp from "@core/firebase/firebase.config";
+import { toast } from "sonner";
 
 export default function SignUpPage(): JSX.Element {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,8 +23,9 @@ export default function SignUpPage(): JSX.Element {
     setError(null);
     setLoading(true);
     try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
-      alert(`Account created for ${cred.user.email}`);
+      await createUserWithEmailAndPassword(auth, email, password);
+      toast.success("Account created successfully. Please sign in.");
+      router.push("/login");
     } catch (err: any) {
       setError(parseFirebaseError(err));
     } finally {
@@ -34,7 +38,7 @@ export default function SignUpPage(): JSX.Element {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Sign up</CardTitle>
-          <CardDescription>Create an account with email or Google</CardDescription>
+          <CardDescription>Create an account with email</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleEmailSignUp} className="space-y-4">
