@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NavBar />
-          {children}
+          <main>{children}</main>
         </ThemeProvider>
       </body>
     </html>
