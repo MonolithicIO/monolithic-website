@@ -24,7 +24,7 @@ export default function Page() {
 
   if (error) {
     return (
-      <main className="flex w-full min-h-screen items-center justify-center p-8 flex-col gap-10">
+      <div className="flex w-full min-h-screen items-center justify-center p-8 flex-col gap-10">
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-red-600">Error loading service status</h1>
           <p className="mt-2 text-sm text-muted-foreground">Could not fetch service status. Please try again.</p>
@@ -38,7 +38,7 @@ export default function Page() {
         >
           Retry
         </Button>
-      </main>
+      </div>
     );
   }
 

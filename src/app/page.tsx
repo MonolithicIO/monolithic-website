@@ -9,10 +9,10 @@ export default function Page() {
   const isDark = resolvedTheme == "dark";
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-8">
       <Image src={isDark ? LightLogo : DarkLogo} alt="" height={200} />
       <h2 className="text-4xl font-bold text-foreground">Under construction</h2>
       <p className="text-muted-foreground">We&apos;re working hard to bring you something amazing!</p>
-    </main>
+    </div>
   );
 }
