@@ -1,23 +1,24 @@
 "use client";
 
 import React, { JSX, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@core/components/ui/card";
 import { Button } from "@core/components/ui/button";
-import { Input } from "@core/components/ui/input";
 import { Label } from "@core/components/ui/label";
 import Image from "next/image";
 import { Separator } from "@core/components/ui/separator";
 import Google from "@images/google.svg";
 import firebaseApp from "@core/firebase/firebase.config";
+import Link from "next/link";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@core/components/ui/input-group";
+import { EyeClosedIcon, EyeIcon, LockIcon, MailIcon } from "lucide-react";
 
 export default function SignInPage(): JSX.Element {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hidePassword, setHidePassword] = useState(false);
   const auth = getAuth(firebaseApp);
 
   async function handleEmailSignIn(e: React.FormEvent) {
@@ -61,30 +62,47 @@ export default function SignInPage(): JSX.Element {
               <Label className="my-2" htmlFor="email">
                 Email
               </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                placeholder="you@company.com"
-                className="mt-1"
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  placeholder="you@company.com"
+                  className="mt-1"
+                />
+                <InputGroupAddon>
+                  <MailIcon />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
 
             <div>
               <Label className="my-2" htmlFor="password">
                 Password
               </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-                placeholder="Your password"
-                className="mt-1"
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="password"
+                  type={hidePassword ? "text" : "password"}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  placeholder="Your password"
+                  className="mt-1"
+                />
+                <InputGroupAddon>
+                  <LockIcon />
+                </InputGroupAddon>
+                <InputGroupButton
+                  onClick={() => {
+                    setHidePassword(!hidePassword);
+                  }}
+                >
+                  {hidePassword ? <EyeIcon /> : <EyeClosedIcon />}
+                </InputGroupButton>
+              </InputGroup>
             </div>
 
             {error && <div className="text-sm text-destructive">{error}</div>}
@@ -94,8 +112,8 @@ export default function SignInPage(): JSX.Element {
                 {loading ? "Signing in..." : "Sign in"}
               </Button>
 
-              <Button variant="link" onClick={() => router.push("/sign-up")}>
-                Create account
+              <Button variant="link">
+                <Link href={"/sign-up"}>Create account</Link>
               </Button>
             </div>
           </form>

@@ -9,6 +9,9 @@ import { Input } from "@core/components/ui/input";
 import { Label } from "@core/components/ui/label";
 import firebaseApp from "@core/firebase/firebase.config";
 import { toast } from "sonner";
+import Link from "next/link";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@core/components/ui/input-group";
+import { EyeClosedIcon, EyeIcon, LockIcon } from "lucide-react";
 
 export default function SignUpPage(): JSX.Element {
   const router = useRouter();
@@ -16,6 +19,7 @@ export default function SignUpPage(): JSX.Element {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hidePassword, setHidePassword] = useState(false);
   const auth = getAuth(firebaseApp);
 
   async function handleEmailSignUp(e: React.FormEvent) {
@@ -61,15 +65,27 @@ export default function SignUpPage(): JSX.Element {
               <Label className="my-2" htmlFor="password">
                 Password
               </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-                placeholder="Create a password"
-                className="mt-1"
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="password"
+                  type={hidePassword ? "text" : "password"}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  placeholder="Your password"
+                  className="mt-1"
+                />
+                <InputGroupAddon>
+                  <LockIcon />
+                </InputGroupAddon>
+                <InputGroupButton
+                  onClick={() => {
+                    setHidePassword(!hidePassword);
+                  }}
+                >
+                  {hidePassword ? <EyeIcon /> : <EyeClosedIcon />}
+                </InputGroupButton>
+              </InputGroup>
             </div>
 
             {error && <div className="text-sm text-destructive">{error}</div>}
@@ -77,6 +93,10 @@ export default function SignUpPage(): JSX.Element {
             <div className="flex items-center justify-between">
               <Button type="submit" disabled={loading}>
                 {loading ? "Creating account..." : "Create account"}
+              </Button>
+
+              <Button variant="link">
+                <Link href={"/login"}>Already have an account?</Link>
               </Button>
             </div>
           </form>
