@@ -26,7 +26,14 @@ export default function Navbar() {
     <nav className="fixed top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto w-full px-4 sm:px-6 lg:px-8">
         <div className="flex h-24 items-center justify-between">
-          <Image src={isDark ? LightLogo : DarkLogo} alt="Monolithic logo" height={64} className="flex items-center" />
+          <Link href={"/"}>
+            <Image
+              src={isDark ? LightLogo : DarkLogo}
+              alt="Monolithic logo"
+              height={64}
+              className="flex items-center"
+            />
+          </Link>
 
           {/* Mark: Right Side Actions */}
           <div className="flex items-center gap-2">

@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import NavBar from "@core/components/ui/nav-bar";
 import { Metadata } from "next";
 import React from "react";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,6 +28,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NavBar />
           <main>{children}</main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
