@@ -1,19 +1,14 @@
 "use client";
 
 import React, { JSX, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@core/components/ui/card";
 import { Button } from "@core/components/ui/button";
 import { Input } from "@core/components/ui/input";
 import { Label } from "@core/components/ui/label";
-import Image from "next/image";
-import { Separator } from "@core/components/ui/separator";
-import Google from "@images/google.svg";
 import firebaseApp from "@core/firebase/firebase.config";
 
 export default function SignUpPage(): JSX.Element {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
