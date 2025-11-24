@@ -3,8 +3,8 @@ export class ApiError extends Error {
   readonly errorCode: string;
   readonly timeStamp: Date;
 
-  constructor(message: string, statusCode: number = 500, errorCode: string = "INTERNAL_ERROR") {
-    super(message);
+  constructor(message: string, statusCode: number = 500, errorCode: string = "INTERNAL_ERROR", cause?: unknown) {
+    super(message, { cause });
     this.statusCode = statusCode;
     this.errorCode = errorCode;
     this.timeStamp = new Date();
@@ -18,31 +18,31 @@ export class ApiError extends Error {
 }
 
 export class ValidationError extends ApiError {
-  constructor(message: string, errorCode: string = "VALIDATION_ERROR") {
-    super(message, 400, errorCode);
+  constructor(message: string, errorCode: string = "VALIDATION_ERROR", cause?: unknown) {
+    super(message, 400, errorCode, cause);
   }
 }
 
 export class UnauthorizedError extends ApiError {
-  constructor(message: string = "Unauthorized", errorCode: string = "UNAUTHORIZED") {
-    super(message, 401, errorCode);
+  constructor(message: string = "Unauthorized", errorCode: string = "UNAUTHORIZED", cause?: unknown) {
+    super(message, 401, errorCode, cause);
   }
 }
 
 export class ForbiddenError extends ApiError {
-  constructor(message: string = "Forbidden", errorCode: string = "FORBIDDEN") {
-    super(message, 403, errorCode);
+  constructor(message: string = "Forbidden", errorCode: string = "FORBIDDEN", cause?: unknown) {
+    super(message, 403, errorCode, cause);
   }
 }
 
 export class NotFoundError extends ApiError {
-  constructor(message: string = "Resource not found", errorCode: string = "NOT_FOUND") {
-    super(message, 404, errorCode);
+  constructor(message: string = "Resource not found", errorCode: string = "NOT_FOUND", cause?: unknown) {
+    super(message, 404, errorCode, cause);
   }
 }
 
 export class ConflictError extends ApiError {
-  constructor(message: string, errorCode: string = "CONFLICT") {
-    super(message, 409, errorCode);
+  constructor(message: string, errorCode: string = "CONFLICT", cause?: unknown) {
+    super(message, 409, errorCode, cause);
   }
 }
