@@ -1,6 +1,8 @@
 import DatabaseHealthModel from "./database-health.model";
 
-export interface AppStatusModel {
+type AppStatusModel = {
   updatedAt: Date;
   databaseHealth: DatabaseHealthModel | null;
-}
+};
+
+export default AppStatusModel;
