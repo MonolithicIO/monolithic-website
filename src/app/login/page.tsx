@@ -139,7 +139,7 @@ export default function SignInPage(): JSX.Element {
   );
 }
 
-function parseFirebaseError(err: any): string {
+const parseFirebaseError = (err: any): string => {
   if (!err) return "Unknown error";
   if (err.code) {
     switch (err.code) {
@@ -158,4 +158,4 @@ function parseFirebaseError(err: any): string {
     }
   }
   return String(err);
-}
+};
