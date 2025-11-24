@@ -1,11 +1,6 @@
 import clientFirebaseApp from "@core/firebase/firebase-client.config";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useState } from "react";
-
-type FirebaseSignInResult = {
-  success: boolean;
-  message: string;
-};
 
 const useLoginViewModel = () => {
   const [email, setEmail] = useState("");
@@ -16,28 +11,31 @@ const useLoginViewModel = () => {
   const auth = getAuth(clientFirebaseApp);
 
   const signIn = async () => {
-    setLoading(true);
-
-    const firebaseToken = await firebaseSignIn();
-
-    if (!firebaseToken.success) {
-      setError(firebaseToken.message);
+    try {
+      setLoading(true);
+      setError(null);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      alert(`Signed in with email ${cred.user.email}`);
+    } catch (err: any) {
+      setError(parseFirebaseError(err));
+    } finally {
       setLoading(false);
-      return;
     }
   };
 
-  const firebaseSignIn = async (): Promise<FirebaseSignInResult> => {
+  async function googleSignIn() {
+    setError(null);
     setLoading(true);
     try {
-      const credentials = await signInWithEmailAndPassword(auth, email, password);
-      const idToken = await credentials.user.getIdToken();
-
-      return { success: true, message: idToken };
+      const provider = new GoogleAuthProvider();
+      const credential = await signInWithPopup(auth, provider);
+      alert(`Signed in with email ${credential.user.email}`);
     } catch (err: any) {
-      return { success: false, message: parseFirebaseError(err) };
+      setError(parseFirebaseError(err));
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   const parseFirebaseError = (err: any): string => {
     if (!err) return "Unknown error";
@@ -59,4 +57,19 @@ const useLoginViewModel = () => {
     }
     return String(err);
   };
+
+  return {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    loading,
+    error,
+    hidePassword,
+    setHidePassword,
+    signIn,
+    googleSignIn,
+  };
 };
+
+export default useLoginViewModel;
