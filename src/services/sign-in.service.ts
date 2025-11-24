@@ -1,15 +1,15 @@
 import serverFirebaseApp from "@core/firebase/firebase-server.config";
 import { App } from "firebase-admin/app";
-import { DecodedIdToken, getAuth } from "firebase-admin/auth";
+import { Auth, DecodedIdToken, getAuth } from "firebase-admin/auth";
 import GetUserService from "./get-user.service";
 import CreateUserService from "./create-user.service";
 import { cookies } from "next/headers";
 import LoginResponseModel from "@model/login-response.model";
 import { randomUUID } from "node:crypto";
+import { UnauthorizedError } from "@errors/api.error";
 
 export default class SignInService {
-  private readonly admin: App;
-  private readonly auth;
+  private readonly auth: Auth;
   private readonly getUserService: GetUserService;
   private readonly createUserService: CreateUserService;
 
@@ -18,14 +18,13 @@ export default class SignInService {
     getUserService: GetUserService = new GetUserService(),
     createUserService: CreateUserService = new CreateUserService()
   ) {
-    this.admin = admin;
     this.getUserService = getUserService;
     this.createUserService = createUserService;
     this.auth = getAuth(admin);
   }
 
   async signIn(token: string): Promise<LoginResponseModel> {
-    const verifyToken = await this.auth.verifyIdToken(token);
+    const verifyToken = await this.verifyToken(token);
     this.createUserIfNotExists(verifyToken);
     this.generateSessionCookie(token);
 
@@ -68,5 +67,19 @@ export default class SignInService {
       sameSite: "lax",
       path: "/",
     });
+  }
+
+  private async verifyToken(token: string): Promise<DecodedIdToken> {
+    try {
+      return await this.auth.verifyIdToken(token, true);
+    } catch (err) {
+      if (err.message === "auth-id-token-expired") {
+        throw new UnauthorizedError("Token expired", "TOKEN_EXPIRED", err);
+      }
+      if (err.message === "auth/id-token-revoked") {
+        throw new UnauthorizedError("Token revoked", "TOKEN_REVOKED", err);
+      }
+      throw new UnauthorizedError("Failed to verify token", "TOKEN_VERIFICATION_FAILED", err);
+    }
   }
 }
