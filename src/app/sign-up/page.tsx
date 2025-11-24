@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription }
 import { Button } from "@core/components/ui/button";
 import { Input } from "@core/components/ui/input";
 import { Label } from "@core/components/ui/label";
-import firebaseApp from "@core/firebase/firebase.config";
+import clientFirebaseApp from "@core/firebase/firebase-client.config";
 import { toast } from "sonner";
 import Link from "next/link";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@core/components/ui/input-group";
@@ -20,7 +20,7 @@ export default function SignUpPage(): JSX.Element {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hidePassword, setHidePassword] = useState(false);
-  const auth = getAuth(firebaseApp);
+  const auth = getAuth(clientFirebaseApp);
 
   async function handleEmailSignUp(e: React.FormEvent) {
     e.preventDefault();

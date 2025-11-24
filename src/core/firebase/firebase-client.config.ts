@@ -7,10 +7,10 @@ const firebaseConfig: FirebaseOptions = {
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
 };
 
-const firebaseApp = getApps.length > 0 ? getApp() : initializeApp(firebaseConfig);
+const clientFirebaseApp = getApps.length > 0 ? getApp() : initializeApp(firebaseConfig);
 
-export default firebaseApp;
+export default clientFirebaseApp;
 
 if (process.env.NODE_ENV === "development") {
-  connectAuthEmulator(getAuth(firebaseApp), "http://127.0.0.1:9099");
+  connectAuthEmulator(getAuth(clientFirebaseApp), "http://127.0.0.1:9099");
 }

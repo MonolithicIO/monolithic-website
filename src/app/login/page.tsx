@@ -8,7 +8,7 @@ import { Label } from "@core/components/ui/label";
 import Image from "next/image";
 import { Separator } from "@core/components/ui/separator";
 import Google from "@images/google.svg";
-import firebaseApp from "@core/firebase/firebase.config";
+import clientFirebaseApp from "@core/firebase/firebase-client.config";
 import Link from "next/link";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@core/components/ui/input-group";
 import { EyeClosedIcon, EyeIcon, LockIcon, MailIcon } from "lucide-react";
@@ -19,7 +19,7 @@ export default function SignInPage(): JSX.Element {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hidePassword, setHidePassword] = useState(false);
-  const auth = getAuth(firebaseApp);
+  const auth = getAuth(clientFirebaseApp);
 
   async function handleEmailSignIn(e: React.FormEvent) {
     e.preventDefault();
