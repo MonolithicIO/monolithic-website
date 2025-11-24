@@ -1,5 +1,6 @@
 import { ApiError } from "@errors/api.error";
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 
 interface ErrorResponse {
   message: string;
@@ -10,6 +11,19 @@ interface ErrorResponse {
 }
 
 export function handleApiError(error: unknown): NextResponse<ErrorResponse> {
+  if (error instanceof ZodError) {
+    return NextResponse.json(
+      {
+        message: error.issues[0].code,
+        errorCode: error.issues[0].message,
+        statusCode: 400,
+        timeStamp: new Date().toISOString(),
+        ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
+      },
+      { status: 400 }
+    );
+  }
+
   if (error instanceof ApiError) {
     return NextResponse.json({
       message: error.message,
