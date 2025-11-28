@@ -43,7 +43,7 @@ export default class SignInService {
         return await this.createUserService.createUser({
           uid: verifyToken.uid,
           email: verifyToken.email,
-          display_name: verifyToken.name,
+          display_name: verifyToken.name || verifyToken.email,
           photo_url: verifyToken.picture,
           phone_number: verifyToken.phone_number,
           email_verified: verifyToken.email_verified,
