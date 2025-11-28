@@ -4,7 +4,8 @@
   "description": "Website for Engineering @ Monolithic",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run docker:up && npm run wait:containers && npm run migration:up && concurrently -n next,firebase --hide firebase 'next dev' 'npm run firebase:emulator:dirty'",
+    "dev": "next dev",
+    "services-up": "npm run docker:up && npm run wait:containers && npm run migration:up && concurrently -n firebase firebase 'npm run firebase:emulator:dirty'",
     "build": "next build",
     "start": "next start",
     "lint:prettier:check": "prettier --check .",
@@ -17,8 +18,6 @@
     "test:unit:watch": "jest --testPathPattern=tests/unit --watch",
     "test:integration": "jest --testPathPattern=tests/integration --runInBand",
     "test:integration:watch": "jest --testPathPattern=tests/integration --watch --runInBand",
-    "test:integration:ephemeral": "npm run docker:down && npm run docker:up && npm run wait:containers && npm run migration:up && concurrently -n next,jest -k -s command-jest --hide next 'next dev' 'wait-on http://localhost:3000 && jest --testPathPattern=tests/integration --runInBand'",
-    "posttest:integration:ephemeral": "npm run docker:down",
     "migration:create": "node-pg-migrate -m src/core/database/migrations create",
     "migration:up": "node-pg-migrate -m src/core/database/migrations --envPath .env.development up",
     "wait:containers": "node tests/scripts/wait-containers.ts",

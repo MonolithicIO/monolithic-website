@@ -5,7 +5,6 @@ const isDevelopment = process.env.NODE_ENV === "development";
 if (admin.apps.length === 0) {
   if (isDevelopment) {
     process.env.FIREBASE_AUTH_EMULATOR_HOST = "http://localhost:9099";
-    admin.initializeApp();
   } else {
     admin.initializeApp({
       credential: admin.credential.cert({
