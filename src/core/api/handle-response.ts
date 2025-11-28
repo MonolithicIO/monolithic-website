@@ -4,13 +4,13 @@ const handleResponse = async <T>(response: Response): Promise<T | ErrorResponse>
   const body = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const errorResponse: ErrorResponse = {
-      message: body?.message || response.statusText || "An error occurred",
-      errorCode: body?.errorCode || "",
-      statusCode: response.status,
-      timeStamp: body?.timeStamp || new Date().toISOString(),
-      stack: body.stack || null,
-    };
+    const errorResponse = new ErrorResponse(
+      body?.message || response.statusText || "An error occurred",
+      body?.errorCode || "",
+      response.status,
+      body?.timeStamp || new Date().toISOString(),
+      body.stack || null
+    );
 
     return errorResponse;
   }

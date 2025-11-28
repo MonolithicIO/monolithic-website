@@ -3,6 +3,14 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
 export class ErrorResponse {
+  constructor(message: string, errorCode: string, statusCode: number, timeStamp: string, stack?: string) {
+    this.message = message;
+    this.errorCode = errorCode;
+    this.statusCode = statusCode;
+    this.timeStamp = timeStamp;
+    this.stack = stack;
+  }
+
   message: string;
   errorCode: string;
   statusCode: number;
