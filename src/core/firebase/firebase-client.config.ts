@@ -12,5 +12,5 @@ const clientFirebaseApp = getApps.length > 0 ? getApp() : initializeApp(firebase
 export default clientFirebaseApp;
 
 if (process.env.NODE_ENV === "development") {
-  connectAuthEmulator(getAuth(clientFirebaseApp), "http://127.0.0.1:9099");
+  connectAuthEmulator(getAuth(clientFirebaseApp), "http://localhost:9099");
 }

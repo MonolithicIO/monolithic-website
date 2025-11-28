@@ -25,7 +25,7 @@ const useLoginViewModel = () => {
       setLoading(true);
       setError(null);
       const credential = await signInWithEmailAndPassword(auth, email, password);
-      handleSignIn(credential);
+      await handleSignIn(credential);
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(parseFirebaseError(err));
@@ -43,7 +43,7 @@ const useLoginViewModel = () => {
     try {
       const provider = new GoogleAuthProvider();
       const credential = await signInWithPopup(auth, provider);
-      handleSignIn(credential);
+      await handleSignIn(credential);
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(parseFirebaseError(err));
@@ -78,7 +78,6 @@ const useLoginViewModel = () => {
 
   const handleSignIn = async (credential: UserCredential) => {
     const idToken = await credential.user.getIdToken();
-    console.log(idToken);
 
     const response = await fetch("api/v1/auth/login", {
       method: "POST",
