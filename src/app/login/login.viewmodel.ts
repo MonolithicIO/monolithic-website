@@ -3,7 +3,13 @@ import handleResponse from "@core/api/handle-response";
 import clientFirebaseApp from "@core/firebase/firebase-client.config";
 import LoginResponseModel from "@model/login-response.model";
 import { FirebaseError } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  UserCredential,
+} from "firebase/auth";
 import { useState } from "react";
 
 const useLoginViewModel = () => {
@@ -19,7 +25,7 @@ const useLoginViewModel = () => {
       setLoading(true);
       setError(null);
       const credential = await signInWithEmailAndPassword(auth, email, password);
-      handleSignIn(await credential.user.getIdToken());
+      handleSignIn(credential);
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(parseFirebaseError(err));
@@ -37,7 +43,7 @@ const useLoginViewModel = () => {
     try {
       const provider = new GoogleAuthProvider();
       const credential = await signInWithPopup(auth, provider);
-      handleSignIn(await credential.user.getIdToken());
+      handleSignIn(credential);
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(parseFirebaseError(err));
@@ -70,13 +76,16 @@ const useLoginViewModel = () => {
     return String(err);
   };
 
-  const handleSignIn = async (token: string) => {
+  const handleSignIn = async (credential: UserCredential) => {
+    const idToken = await credential.user.getIdToken();
+    console.log(idToken);
+
     const response = await fetch("api/v1/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ authToken: token }),
+      body: JSON.stringify({ authToken: idToken }),
     });
 
     const result = await handleResponse<LoginResponseModel>(response);
