@@ -20,7 +20,7 @@ export default class UserRepository {
   }
 
   async createUser(user: CreateUserModel): Promise<UserModel> {
-    const rows = this.databaseProvider.query<UserModel>(
+    const rows = await this.databaseProvider.query<UserModel>(
       "INSERT INTO users (id, email, display_name, photo_url, phone_number, email_verified, provider, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
       [
         user.uid,

@@ -29,6 +29,7 @@ export default class SignInService {
     const user = await this.createUserIfNotExists(verifyToken);
     this.generateSessionCookie(token);
 
+    console.log("User signed in successfully", user);
     return {
       sessionUuid: randomUUID(),
       userName: user.display_name,
@@ -40,7 +41,7 @@ export default class SignInService {
       const user = await this.getUserService.getUserById(verifyToken.uid);
 
       if (!user) {
-        return await this.createUserService.createUser({
+        const newUser = await this.createUserService.createUser({
           uid: verifyToken.uid,
           email: verifyToken.email,
           display_name: verifyToken.name ?? verifyToken.email,
@@ -51,6 +52,8 @@ export default class SignInService {
           created_at: new Date(),
           updated_at: new Date(),
         });
+        console.log("New user created", newUser);
+        return newUser;
       }
 
       return user;
