@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@core/components/ui/card";
 import { Button } from "@core/components/ui/button";
-import { Input } from "@core/components/ui/input";
 import { Label } from "@core/components/ui/label";
-import firebaseApp from "@core/firebase/firebase.config";
+import clientFirebaseApp from "@core/firebase/firebase-client.config";
 import { toast } from "sonner";
 import Link from "next/link";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@core/components/ui/input-group";
-import { EyeClosedIcon, EyeIcon, LockIcon } from "lucide-react";
+import { EyeClosedIcon, EyeIcon, LockIcon, MailIcon } from "lucide-react";
 
 export default function SignUpPage(): JSX.Element {
   const router = useRouter();
@@ -20,7 +19,7 @@ export default function SignUpPage(): JSX.Element {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hidePassword, setHidePassword] = useState(false);
-  const auth = getAuth(firebaseApp);
+  const auth = getAuth(clientFirebaseApp);
 
   async function handleEmailSignUp(e: React.FormEvent) {
     e.preventDefault();
@@ -50,15 +49,20 @@ export default function SignUpPage(): JSX.Element {
               <Label className="my-2" htmlFor="email">
                 Email
               </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                placeholder="you@company.com"
-                className="mt-1"
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  placeholder="you@company.com"
+                  className="mt-1"
+                />
+                <InputGroupAddon>
+                  <MailIcon />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
 
             <div>

@@ -1,7 +1,16 @@
 import { ApiError } from "@errors/api.error";
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 
-interface ErrorResponse {
+export class ErrorResponse {
+  constructor(message: string, errorCode: string, statusCode: number, timeStamp: string, stack?: string) {
+    this.message = message;
+    this.errorCode = errorCode;
+    this.statusCode = statusCode;
+    this.timeStamp = timeStamp;
+    this.stack = stack;
+  }
+
   message: string;
   errorCode: string;
   statusCode: number;
@@ -10,14 +19,30 @@ interface ErrorResponse {
 }
 
 export function handleApiError(error: unknown): NextResponse<ErrorResponse> {
+  if (error instanceof ZodError) {
+    return NextResponse.json(
+      {
+        message: error.issues[0].code,
+        errorCode: error.issues[0].message,
+        statusCode: 400,
+        timeStamp: new Date().toISOString(),
+        ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
+      },
+      { status: 400 }
+    );
+  }
+
   if (error instanceof ApiError) {
-    return NextResponse.json({
-      message: error.message,
-      errorCode: error.errorCode,
-      statusCode: error.statusCode,
-      timeStamp: error.timeStamp.toISOString(),
-      ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
-    });
+    return NextResponse.json(
+      {
+        message: error.message,
+        errorCode: error.errorCode,
+        statusCode: error.statusCode,
+        timeStamp: error.timeStamp.toISOString(),
+        ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
+      },
+      { status: error.statusCode }
+    );
   }
 
   if (error instanceof Error) {

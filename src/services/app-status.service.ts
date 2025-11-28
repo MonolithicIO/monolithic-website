@@ -1,5 +1,5 @@
 import { DateProvider, DateProviderImpl } from "@core/providers/date.provider";
-import { AppStatusModel } from "@model/app-status.model";
+import AppStatusModel from "@model/app-status.model";
 import DatabaseHealthModel from "@model/database-health.model";
 import { DatabaseHealthRepository, DatabaseHealthRepositoryImpl } from "@repository/database-health.repository";
 

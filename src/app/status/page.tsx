@@ -4,11 +4,12 @@ import React from "react";
 import useSWR, { SWRResponse } from "swr";
 import ServiceStatusCard from "./components/service-status-card.component";
 import { Clock, Database, Server } from "lucide-react";
-import { AppStatusModel } from "@model/app-status.model";
+
 import fetcher from "@core/api/fetcher";
 import ServiceStatusUpdatedAt from "./components/service-status-updated-at.component";
 import { Spinner } from "@core/components/ui/spinner";
 import { Button } from "@core/components/ui/button";
+import AppStatusModel from "@model/app-status.model";
 
 export default function Page() {
   const { data, isLoading, error, mutate } = useAppStatus();
