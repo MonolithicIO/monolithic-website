@@ -94,7 +94,7 @@ const useLoginViewModel = () => {
       return;
     }
 
-    alert(result.sessionUuid);
+    alert(result.userName);
   };
 
   return {

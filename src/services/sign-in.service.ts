@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import LoginResponseModel from "@model/login-response.model";
 import { randomUUID } from "node:crypto";
 import { UnauthorizedError } from "@errors/api.error";
+import UserModel from "@model/user.model";
 
 export default class SignInService {
   private readonly auth: Auth;
@@ -25,20 +26,21 @@ export default class SignInService {
 
   async signIn(token: string): Promise<LoginResponseModel> {
     const verifyToken = await this.verifyToken(token);
-    this.createUserIfNotExists(verifyToken);
+    const user = await this.createUserIfNotExists(verifyToken);
     this.generateSessionCookie(token);
 
     return {
       sessionUuid: randomUUID(),
+      userName: user.display_name,
     };
   }
 
-  private async createUserIfNotExists(verifyToken: DecodedIdToken): Promise<void> {
+  private async createUserIfNotExists(verifyToken: DecodedIdToken): Promise<UserModel> {
     try {
       const user = await this.getUserService.getUserById(verifyToken.uid);
 
       if (!user) {
-        await this.createUserService.createUser({
+        return await this.createUserService.createUser({
           uid: verifyToken.uid,
           email: verifyToken.email,
           display_name: verifyToken.name,
@@ -50,6 +52,8 @@ export default class SignInService {
           updated_at: new Date(),
         });
       }
+
+      return user;
     } catch (err) {
       throw new Error("Failed to create user", { cause: err });
     }
