@@ -28,7 +28,7 @@ const useLoginViewModel = () => {
       await handleSignIn(credential);
     } catch (err) {
       if (err instanceof FirebaseError) {
-        setError(parseFirebaseError(err));
+        setError(parseFirebaseError(err.code));
       } else {
         setError("Unexpected error");
       }
@@ -46,7 +46,7 @@ const useLoginViewModel = () => {
       await handleSignIn(credential);
     } catch (err) {
       if (err instanceof FirebaseError) {
-        setError(parseFirebaseError(err));
+        setError(parseFirebaseError(err.code));
       } else {
         setError("Unexpected error");
       }
@@ -55,25 +55,25 @@ const useLoginViewModel = () => {
     }
   };
 
-  const parseFirebaseError = (err: any): string => {
+  const parseFirebaseError = (err: string): string => {
     if (!err) return "Unknown error";
-    if (err.code) {
-      switch (err.code) {
-        case "auth/user-not-found":
-          return "Incorrect credentials.";
-        case "auth/wrong-password":
-          return "Incorrect credentials.";
-        case "auth/invalid-email":
-          return "Invalid email address.";
-        case "auth/popup-closed-by-user":
-          return "Popup closed before completion.";
-        case "auth/popup-blocked":
-          return "Popup blocked by browser.";
-        default:
-          return "Unknown error. Please try again later.";
-      }
+
+    switch (err) {
+      case "auth/user-not-found":
+        return "Incorrect credentials.";
+      case "auth/wrong-password":
+        return "Incorrect credentials.";
+      case "auth/invalid-credential":
+        return "Incorrect email or password.";
+      case "auth/invalid-email":
+        return "Invalid email address.";
+      case "auth/popup-closed-by-user":
+        return "Popup closed before completion.";
+      case "auth/popup-blocked":
+        return "Popup blocked by browser.";
+      default:
+        return "Unknown error. Please try again later.";
     }
-    return String(err);
   };
 
   const handleSignIn = async (credential: UserCredential) => {
