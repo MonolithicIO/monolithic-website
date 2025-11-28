@@ -73,6 +73,7 @@ export default class SignInService {
     try {
       return await this.auth.verifyIdToken(token, true);
     } catch (err) {
+      console.log(err);
       if (err.message === "auth-id-token-expired") {
         throw new UnauthorizedError("Token expired", "TOKEN_EXPIRED", err);
       }

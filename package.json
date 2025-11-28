@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
-    "services-up": "npm run docker:up && npm run wait:containers && npm run migration:up && concurrently -n firebase firebase 'npm run firebase:emulator:dirty'",
+    "services-up": "npm run docker:up && npm run wait:containers && npm run migration:up && npm run firebase:emulator:dirty",
     "build": "next build",
     "start": "next start",
     "lint:prettier:check": "prettier --check .",
