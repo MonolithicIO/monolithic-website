@@ -1,7 +1,6 @@
 "use client";
 
-import React, { JSX, useState } from "react";
-
+import React, { JSX } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@core/components/ui/card";
 import { Button } from "@core/components/ui/button";
 import { Label } from "@core/components/ui/label";
