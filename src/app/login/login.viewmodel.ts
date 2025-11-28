@@ -1,4 +1,8 @@
+import { ErrorResponse } from "@core/api/error-handler";
+import handleResponse from "@core/api/handle-response";
 import clientFirebaseApp from "@core/firebase/firebase-client.config";
+import LoginResponseModel from "@model/login-response.model";
+import { FirebaseError } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useState } from "react";
 
@@ -10,32 +14,40 @@ const useLoginViewModel = () => {
   const [hidePassword, setHidePassword] = useState(false);
   const auth = getAuth(clientFirebaseApp);
 
-  const signIn = async () => {
+  const credentialSignIn = async () => {
     try {
       setLoading(true);
       setError(null);
-      const cred = await signInWithEmailAndPassword(auth, email, password);
-      alert(`Signed in with email ${cred.user.email}`);
-    } catch (err: any) {
-      setError(parseFirebaseError(err));
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      handleSignIn(await credential.user.getIdToken());
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(parseFirebaseError(err));
+      } else {
+        setError("Unexpected error");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  async function googleSignIn() {
+  const googleSignIn = async () => {
     setError(null);
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
       const credential = await signInWithPopup(auth, provider);
-      alert(`Signed in with email ${credential.user.email}`);
-    } catch (err: any) {
-      setError(parseFirebaseError(err));
+      handleSignIn(await credential.user.getIdToken());
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(parseFirebaseError(err));
+      } else {
+        setError("Unexpected error");
+      }
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const parseFirebaseError = (err: any): string => {
     if (!err) return "Unknown error";
@@ -58,6 +70,25 @@ const useLoginViewModel = () => {
     return String(err);
   };
 
+  const handleSignIn = async (token: string) => {
+    const response = await fetch("api/v1/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ authToken: token }),
+    });
+
+    const result = await handleResponse<LoginResponseModel>(response);
+
+    if (result instanceof ErrorResponse) {
+      setError(result.message);
+      return;
+    }
+
+    alert(result.sessionUuid);
+  };
+
   return {
     email,
     setEmail,
@@ -67,7 +98,7 @@ const useLoginViewModel = () => {
     error,
     hidePassword,
     setHidePassword,
-    signIn,
+    credentialSignIn,
     googleSignIn,
   };
 };

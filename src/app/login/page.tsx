@@ -17,7 +17,7 @@ export default function SignInPage(): JSX.Element {
 
   async function handleEmailSignIn(e: React.FormEvent) {
     e.preventDefault();
-    await viewModel.signIn();
+    await viewModel.credentialSignIn();
   }
 
   async function handleGoogleSignIn() {

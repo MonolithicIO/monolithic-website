@@ -2,7 +2,7 @@ import { ApiError } from "@errors/api.error";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-interface ErrorResponse {
+export class ErrorResponse {
   message: string;
   errorCode: string;
   statusCode: number;
@@ -25,13 +25,16 @@ export function handleApiError(error: unknown): NextResponse<ErrorResponse> {
   }
 
   if (error instanceof ApiError) {
-    return NextResponse.json({
-      message: error.message,
-      errorCode: error.errorCode,
-      statusCode: error.statusCode,
-      timeStamp: error.timeStamp.toISOString(),
-      ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
-    });
+    return NextResponse.json(
+      {
+        message: error.message,
+        errorCode: error.errorCode,
+        statusCode: error.statusCode,
+        timeStamp: error.timeStamp.toISOString(),
+        ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
+      },
+      { status: error.statusCode }
+    );
   }
 
   if (error instanceof Error) {
