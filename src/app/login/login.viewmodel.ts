@@ -33,6 +33,7 @@ const useLoginViewModel = () => {
         setError("Unexpected error");
       }
     } finally {
+      auth.signOut();
       setLoading(false);
     }
   };

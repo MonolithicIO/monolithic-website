@@ -3,9 +3,6 @@ import { ErrorResponse } from "./error-handler";
 const handleResponse = async <T>(response: Response): Promise<T | ErrorResponse> => {
   const body = await response.json().catch(() => null);
 
-  console.log("hello world");
-  console.log(body);
-
   if (!response.ok) {
     const errorResponse = new ErrorResponse(
       body?.message || response.statusText || "An error occurred",
