@@ -1,8 +1,8 @@
-import { useState, createContext, ReactNode } from "react";
+import { useState, createContext, ReactNode, useContext } from "react";
 
 interface CurrentUser {
   displayName: string;
-  photoUrl: string;
+  photoUrl: string | null;
 }
 
 interface UserContextValue {
@@ -10,7 +10,6 @@ interface UserContextValue {
   // eslint-disable-next-line no-unused-vars
   updateUser: (_user: CurrentUser) => void;
   clearUser: () => void;
-  restoreUser: () => void;
 }
 
 interface UserProviderProps {
@@ -20,7 +19,10 @@ interface UserProviderProps {
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export function UserProvider({ children }: UserProviderProps) {
-  const [user, setUser] = useState<CurrentUser | null>(null);
+  const [user, setUser] = useState<CurrentUser | null>(() => {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
+  });
 
   const updateUser = (user: CurrentUser) => {
     setUser(user);
@@ -32,19 +34,19 @@ export function UserProvider({ children }: UserProviderProps) {
     setUser(null);
   };
 
-  const restoreUser = () => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      setUser(JSON.parse(user));
-    }
-  };
-
   const value: UserContextValue = {
     user,
     updateUser,
     clearUser,
-    restoreUser,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
+
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+  return context;
+};

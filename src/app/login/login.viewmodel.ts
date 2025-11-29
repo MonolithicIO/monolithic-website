@@ -11,6 +11,7 @@ import {
   UserCredential,
 } from "firebase/auth";
 import { useState } from "react";
+import { useUser } from "src/hooks/user.hook";
 
 const useLoginViewModel = () => {
   const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ const useLoginViewModel = () => {
   const [error, setError] = useState<string | null>(null);
   const [hidePassword, setHidePassword] = useState(false);
   const auth = getAuth(clientFirebaseApp);
+  const { updateUser } = useUser();
 
   const credentialSignIn = async () => {
     try {
@@ -98,7 +100,10 @@ const useLoginViewModel = () => {
       return;
     }
 
-    alert(result.userName);
+    updateUser({
+      displayName: result.userName,
+      photoUrl: null,
+    });
   };
 
   return {
