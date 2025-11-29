@@ -1,4 +1,5 @@
-import { useState, createContext, ReactNode, useContext } from "react";
+"use client";
+import { useState, createContext, ReactNode, useContext, useEffect } from "react";
 
 interface CurrentUser {
   displayName: string;
@@ -19,10 +20,7 @@ interface UserProviderProps {
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export function UserProvider({ children }: UserProviderProps) {
-  const [user, setUser] = useState<CurrentUser | null>(() => {
-    const user = localStorage.getItem("user");
-    return user ? JSON.parse(user) : null;
-  });
+  const [user, setUser] = useState<CurrentUser | null>(null);
 
   const updateUser = (user: CurrentUser) => {
     setUser(user);
@@ -39,6 +37,14 @@ export function UserProvider({ children }: UserProviderProps) {
     updateUser,
     clearUser,
   };
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUser(JSON.parse(user));
+    }
+  }, []);
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

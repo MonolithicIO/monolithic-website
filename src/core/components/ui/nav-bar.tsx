@@ -7,12 +7,16 @@ import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { Button } from "./button";
 import Link from "next/link";
+import { useUser } from "src/hooks/user.hook";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+  const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
+  const { user, clearUser } = useUser();
   const isDark = resolvedTheme == "dark";
   const pathName = usePathname();
-  const showLoginButtons = !["/login", "/sign-up"].includes(pathName);
+  const showLoginButtons = !user && !["/login", "/sign-up"].includes(pathName);
 
   const toggleTheme = () => {
     if (isDark) {
@@ -35,10 +39,17 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* Mark: Right Side Actions */}
           <div className="flex items-center gap-2">
-            {/* Mark: Theme Toggle */}
-            {showLoginButtons && <LoginButtons />}
+            {showLoginButtons ? (
+              <LoginButtons />
+            ) : (
+              <LogoutButton
+                clearUser={() => {
+                  clearUser();
+                  router.push("/");
+                }}
+              />
+            )}
             <button
               onClick={toggleTheme}
               className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
@@ -61,6 +72,18 @@ function LoginButtons() {
       </Button>
       <Button>
         <Link href={"sign-up"}>Sign up</Link>
+      </Button>
+    </div>
+  );
+}
+
+function LogoutButton({ clearUser }: { clearUser: () => void }) {
+  return (
+    <div className="flex flex-row gap-4">
+      <Button variant="outline">
+        <Link href={"/"} onClick={clearUser}>
+          Log out
+        </Link>
       </Button>
     </div>
   );

@@ -22,25 +22,27 @@ const useLoginViewModel = () => {
   const auth = getAuth(clientFirebaseApp);
   const { updateUser } = useUser();
 
-  const credentialSignIn = async () => {
+  const credentialSignIn = async (): Promise<boolean> => {
     try {
       setLoading(true);
       setError(null);
       const credential = await signInWithEmailAndPassword(auth, email, password);
       await handleSignIn(credential);
+      return true;
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(parseFirebaseError(err.code));
       } else {
         setError("Unexpected error");
       }
+      return false;
     } finally {
       auth.signOut();
       setLoading(false);
     }
   };
 
-  const googleSignIn = async () => {
+  const googleSignIn = async (): Promise<boolean> => {
     setError(null);
     setLoading(true);
     try {
@@ -50,12 +52,14 @@ const useLoginViewModel = () => {
       });
       const credential = await signInWithPopup(auth, provider);
       await handleSignIn(credential);
+      return true;
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(parseFirebaseError(err.code));
       } else {
         setError("Unexpected error");
       }
+      return false;
     } finally {
       setLoading(false);
     }
