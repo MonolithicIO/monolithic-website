@@ -43,6 +43,9 @@ const useLoginViewModel = () => {
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: "select_account",
+      });
       const credential = await signInWithPopup(auth, provider);
       await handleSignIn(credential);
     } catch (err) {
