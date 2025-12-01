@@ -11,17 +11,25 @@ import Link from "next/link";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@core/components/ui/input-group";
 import { EyeClosedIcon, EyeIcon, LockIcon, MailIcon } from "lucide-react";
 import useLoginViewModel from "./login.viewmodel";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage(): JSX.Element {
   const viewModel = useLoginViewModel();
+  const router = useRouter();
 
   async function handleEmailSignIn(e: React.FormEvent) {
     e.preventDefault();
-    await viewModel.credentialSignIn();
+    const result = await viewModel.credentialSignIn();
+    if (result) {
+      router.push("/");
+    }
   }
 
   async function handleGoogleSignIn() {
-    viewModel.googleSignIn();
+    const result = await viewModel.googleSignIn();
+    if (result) {
+      router.push("/");
+    }
   }
 
   return (

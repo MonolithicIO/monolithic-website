@@ -3,9 +3,7 @@ import { App } from "firebase-admin/app";
 import { Auth, DecodedIdToken, getAuth } from "firebase-admin/auth";
 import GetUserService from "./get-user.service";
 import CreateUserService from "./create-user.service";
-import { cookies } from "next/headers";
 import LoginResponseModel from "@model/login-response.model";
-import { randomUUID } from "node:crypto";
 import { UnauthorizedError } from "@errors/api.error";
 import UserModel from "@model/user.model";
 
@@ -27,11 +25,9 @@ export default class SignInService {
   async signIn(token: string): Promise<LoginResponseModel> {
     const verifyToken = await this.verifyToken(token);
     const user = await this.createUserIfNotExists(verifyToken);
-    this.generateSessionCookie(token);
 
-    console.log("User signed in successfully", user);
     return {
-      sessionUuid: randomUUID(),
+      sessionCookie: await this.generateSessionCookie(token),
       userName: user.display_name,
     };
   }
@@ -52,7 +48,6 @@ export default class SignInService {
           created_at: new Date(),
           updated_at: new Date(),
         });
-        console.log("New user created", newUser);
         return newUser;
       }
 
@@ -62,23 +57,15 @@ export default class SignInService {
     }
   }
 
-  private async generateSessionCookie(token: string) {
+  private async generateSessionCookie(token: string): Promise<string> {
     const expiration = 60 * 60 * 1000;
-    const sessionCookie = await this.auth.createSessionCookie(token, { expiresIn: expiration });
-    const cookieStore = await cookies();
-
-    cookieStore.set("session", sessionCookie, {
-      maxAge: expiration,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-    });
+    return await this.auth.createSessionCookie(token, { expiresIn: expiration });
   }
 
   private async verifyToken(token: string): Promise<DecodedIdToken> {
     try {
-      return await this.auth.verifyIdToken(token, true);
+      const decodedToken = await this.auth.verifyIdToken(token, true);
+      return decodedToken;
     } catch (err) {
       console.log(err);
       if (err.message === "auth-id-token-expired") {

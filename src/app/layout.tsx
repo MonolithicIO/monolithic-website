@@ -5,6 +5,7 @@ import NavBar from "@core/components/ui/nav-bar";
 import { Metadata } from "next";
 import React from "react";
 import { Toaster } from "sonner";
+import { UserProvider } from "src/hooks/user.hook";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,9 +27,11 @@ export default function RootLayout({
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NavBar />
-          <main>{children}</main>
-          <Toaster />
+          <UserProvider>
+            <NavBar />
+            <main>{children}</main>
+            <Toaster />
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>

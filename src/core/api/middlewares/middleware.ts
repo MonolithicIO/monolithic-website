@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 export interface MiddlewareContext {
   request: NextRequest;
   params?: any;
-  authToken?: string;
+  userId?: string;
   [key: string]: any;
 }
 
 export type NextFunction = () => Promise<void>;
 
-export type MiddlewareFunction = (context: MiddlewareContext, next: NextFunction) => Promise<void | NextResponse>;
+export type MiddlewareFunction = (_context: MiddlewareContext, _next: NextFunction) => Promise<void | NextResponse>;
 
-export type RouteHandler = (context: MiddlewareContext) => Promise<NextResponse> | NextResponse;
+export type RouteHandler = (_context: MiddlewareContext) => Promise<NextResponse> | NextResponse;

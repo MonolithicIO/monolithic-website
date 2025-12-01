@@ -11,6 +11,7 @@ import {
   UserCredential,
 } from "firebase/auth";
 import { useState } from "react";
+import { useUser } from "src/hooks/user.hook";
 
 const useLoginViewModel = () => {
   const [email, setEmail] = useState("");
@@ -19,37 +20,46 @@ const useLoginViewModel = () => {
   const [error, setError] = useState<string | null>(null);
   const [hidePassword, setHidePassword] = useState(false);
   const auth = getAuth(clientFirebaseApp);
+  const { updateUser } = useUser();
 
-  const credentialSignIn = async () => {
+  const credentialSignIn = async (): Promise<boolean> => {
     try {
       setLoading(true);
       setError(null);
       const credential = await signInWithEmailAndPassword(auth, email, password);
       await handleSignIn(credential);
+      return true;
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(parseFirebaseError(err.code));
       } else {
         setError("Unexpected error");
       }
+      return false;
     } finally {
+      auth.signOut();
       setLoading(false);
     }
   };
 
-  const googleSignIn = async () => {
+  const googleSignIn = async (): Promise<boolean> => {
     setError(null);
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: "select_account",
+      });
       const credential = await signInWithPopup(auth, provider);
       await handleSignIn(credential);
+      return true;
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(parseFirebaseError(err.code));
       } else {
         setError("Unexpected error");
       }
+      return false;
     } finally {
       setLoading(false);
     }
@@ -94,7 +104,10 @@ const useLoginViewModel = () => {
       return;
     }
 
-    alert(result.userName);
+    updateUser({
+      displayName: result.userName,
+      photoUrl: null,
+    });
   };
 
   return {
