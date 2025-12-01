@@ -22,5 +22,8 @@ export const POST = createHandler([], async context => {
     path: "/",
   });
 
-  return NextResponse.json({ displayName: response.userName }, { status: 201 });
+  return NextResponse.json(
+    { displayName: response.userModel.display_name, photoUrl: response.userModel.photo_url },
+    { status: 201 }
+  );
 });
