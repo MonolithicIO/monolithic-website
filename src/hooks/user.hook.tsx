@@ -27,8 +27,9 @@ export function UserProvider({ children }: UserProviderProps) {
     localStorage.setItem("user", JSON.stringify(user));
   };
 
-  const clearUser = () => {
+  const clearUser = async () => {
     localStorage.removeItem("user");
+    fetch("api/v1/auth/logout", { method: "DELETE" });
     setUser(null);
   };
 
