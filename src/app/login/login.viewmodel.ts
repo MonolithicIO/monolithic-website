@@ -13,6 +13,11 @@ import {
 import { useState } from "react";
 import { useUser } from "src/hooks/user.hook";
 
+type LoginResponse = {
+  displayName: string;
+  photoUrl: string | null;
+};
+
 const useLoginViewModel = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -97,7 +102,7 @@ const useLoginViewModel = () => {
       body: JSON.stringify({ authToken: idToken }),
     });
 
-    const result = await handleResponse<LoginResponseModel>(response);
+    const result = await handleResponse<LoginResponse>(response);
 
     if (result instanceof ErrorResponse) {
       setError(result.message);
@@ -105,8 +110,8 @@ const useLoginViewModel = () => {
     }
 
     updateUser({
-      displayName: result.userName,
-      photoUrl: null,
+      displayName: result.displayName,
+      photoUrl: result.photoUrl,
     });
   };
 
