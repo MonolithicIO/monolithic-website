@@ -1,7 +1,6 @@
 import { ErrorResponse } from "@core/api/error-handler";
 import handleResponse from "@core/api/handle-response";
 import clientFirebaseApp from "@core/firebase/firebase-client.config";
-import LoginResponseModel from "@model/login-response.model";
 import { FirebaseError } from "firebase/app";
 import {
   getAuth,
