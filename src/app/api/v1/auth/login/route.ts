@@ -1,5 +1,6 @@
 import { createHandler } from "@core/api/api-handler";
 import SignInService from "@services/sign-in.service";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { loginSchema } from "src/schemas/login.schema";
 
@@ -9,5 +10,17 @@ export const POST = createHandler([], async context => {
 
   const loginService = new SignInService();
   const response = await loginService.signIn(authToken);
-  return NextResponse.json(response, { status: 201 });
+  const cookiesStore = await cookies();
+
+  cookiesStore.set({
+    name: "session",
+    value: response.sessionCookie,
+    maxAge: 60 * 60 * 1000,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+  });
+
+  return NextResponse.json({ displayName: response.userName }, { status: 201 });
 });

@@ -1,6 +1,6 @@
 type LoginResponseModel = {
   userName: string;
-  sessionUuid: string;
+  sessionCookie: string;
 };
 
 export default LoginResponseModel;

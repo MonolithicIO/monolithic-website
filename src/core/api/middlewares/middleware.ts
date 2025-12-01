@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export interface MiddlewareContext {
   request: NextRequest;
   params?: any;
-  authToken?: string;
+  userId?: string;
   [key: string]: any;
 }
 
