@@ -1,5 +1,5 @@
 "use client";
-import { Moon, Sun, User } from "lucide-react";
+import { Moon, Sun, User, LogOut, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import LightLogo from "@images/monolithic-horizontal-light.svg";
@@ -9,6 +9,15 @@ import { usePathname } from "next/navigation";
 import { Button } from "./button";
 import Link from "next/link";
 import { useUser } from "src/hooks/user.hook";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -40,7 +49,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2">
             {showLoginButtons && <LoginButtons />}
-            {user && <UserInfo />}
+            {user && <UserMenu />}
             <button
               onClick={toggleTheme}
               className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
@@ -68,41 +77,50 @@ function LoginButtons() {
   );
 }
 
-function UserInfo() {
+function UserMenu() {
   const { user, clearUser } = useUser();
+  const router = useRouter();
   const [imageError, setImageError] = useState(false);
 
+  const handleLogout = () => {
+    clearUser();
+    router.push("/");
+  };
+
   return (
-    <div className="flex flex-row items-center gap-4">
-      <div className="flex items-center gap-3">
-        <div className="relative h-10 w-10 overflow-hidden rounded-full bg-muted flex items-center justify-center">
-          {user?.photoUrl && !imageError ? (
-            <Image
-              src={user.photoUrl}
-              alt={`${user.displayName || "User"} profile`}
-              width={40}
-              height={40}
-              className="object-cover"
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <User className="h-5 w-5 text-muted-foreground" />
-          )}
-        </div>
-
-        <span className="text-sm font-medium text-foreground">{user?.displayName || "User"}</span>
-      </div>
-
-      <Button variant="outline">
-        <Link
-          href={"/"}
-          onClick={() => {
-            clearUser();
-          }}
-        >
-          Log out
-        </Link>
-      </Button>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="flex items-center gap-2 rounded-full border border-border bg-background px-2 py-1.5 transition-colors hover:bg-accent focus:outline-none">
+          <div className="relative h-8 w-8 overflow-hidden rounded-full bg-muted flex items-center justify-center">
+            {user?.photoUrl && !imageError ? (
+              <Image
+                src={user.photoUrl}
+                alt={`${user.displayName || "User"} profile`}
+                width={32}
+                height={32}
+                className="object-cover"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <User className="h-4 w-4 text-muted-foreground" />
+            )}
+          </div>
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user?.displayName || "User"}</p>
+            <p className="text-xs leading-none text-muted-foreground">My Account</p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

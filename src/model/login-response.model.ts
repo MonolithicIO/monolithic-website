@@ -1,5 +1,7 @@
+import UserModel from "./user.model";
+
 type LoginResponseModel = {
-  userName: string;
+  userModel: UserModel;
   sessionCookie: string;
 };
 

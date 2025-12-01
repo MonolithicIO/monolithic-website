@@ -28,7 +28,7 @@ export default class SignInService {
 
     return {
       sessionCookie: await this.generateSessionCookie(token),
-      userName: user.display_name,
+      userModel: user,
     };
   }
 
