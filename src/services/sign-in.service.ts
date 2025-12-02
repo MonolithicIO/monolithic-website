@@ -6,9 +6,11 @@ import CreateUserService from "./create-user.service";
 import LoginResponseModel from "@model/login-response.model";
 import { UnauthorizedError } from "@errors/api.error";
 import UserModel from "@model/user.model";
+import JwtSigner from "@core/jwt/JwtSigner";
 
 export default class SignInService {
   private readonly auth: Auth;
+  private readonly jwtSigner: JwtSigner;
   private readonly getUserService: GetUserService;
   private readonly createUserService: CreateUserService;
 
@@ -23,11 +25,11 @@ export default class SignInService {
   }
 
   async signIn(token: string): Promise<LoginResponseModel> {
-    const verifyToken = await this.verifyToken(token);
-    const user = await this.createUserIfNotExists(verifyToken);
+    const firebaseId = await this.verifyFirebaseToken(token);
+    const user = await this.createUserIfNotExists(firebaseId);
 
     return {
-      sessionCookie: await this.generateSessionCookie(token),
+      sessionCookie: await this.generateSessionCookie(user),
       userModel: user,
     };
   }
@@ -57,12 +59,15 @@ export default class SignInService {
     }
   }
 
-  private async generateSessionCookie(token: string): Promise<string> {
-    const expiration = 60 * 60 * 1000;
-    return await this.auth.createSessionCookie(token, { expiresIn: expiration });
+  private async generateSessionCookie(user: UserModel): Promise<string> {
+    // TODO: Add user roles
+    return this.jwtSigner.signToken({
+      userId: user.id,
+      roles: [],
+    });
   }
 
-  private async verifyToken(token: string): Promise<DecodedIdToken> {
+  private async verifyFirebaseToken(token: string): Promise<DecodedIdToken> {
     try {
       const decodedToken = await this.auth.verifyIdToken(token, true);
       return decodedToken;

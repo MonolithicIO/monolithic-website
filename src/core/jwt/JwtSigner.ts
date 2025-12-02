@@ -1,11 +1,11 @@
 import { sign, SignOptions, verify } from "jsonwebtoken";
 
-type JwtSignerProps = {
+export type JwtSignerProps = {
   userId: string;
   roles: string[];
 };
 
-class JwtSigner {
+export default class JwtSigner {
   signToken(props: JwtSignerProps): string {
     const options: SignOptions = {
       issuer: process.env.JWT_ISSUER,
