@@ -60,6 +60,9 @@ const useLoginViewModel = () => {
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(parseFirebaseError(err.code));
+      }
+      if (err instanceof ErrorResponse) {
+        setError(err.message);
       } else {
         setError("Unexpected error");
       }
@@ -104,8 +107,7 @@ const useLoginViewModel = () => {
     const result = await handleResponse<LoginResponse>(response);
 
     if (result instanceof ErrorResponse) {
-      setError(result.message);
-      return;
+      throw result;
     }
 
     updateUser({
