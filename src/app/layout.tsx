@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "./global.css";
 import { ThemeProvider } from "next-themes";
-import NavBar from "@core/components/ui/nav-bar";
+import NavBar from "src/components/nav-bar";
 import { Metadata } from "next";
 import React from "react";
 import { Toaster } from "sonner";
