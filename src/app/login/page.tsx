@@ -90,14 +90,20 @@ export default function SignInPage(): JSX.Element {
 
             {viewModel.error && <div className="text-sm text-destructive">{viewModel.error}</div>}
 
-            <div className="flex items-center justify-between">
-              <Button type="submit" disabled={viewModel.loading}>
+            <div className="flex flex-col gap-2">
+              <Button type="submit" disabled={viewModel.loading} className="w-full">
                 {viewModel.loading ? "Signing in..." : "Sign in"}
               </Button>
 
-              <Button variant="link">
-                <Link href={"/sign-up"}>Create account</Link>
-              </Button>
+              <div className="flex items-center justify-between">
+                <Button variant="link">
+                  <Link href={"/forgot-password"}>Forgot password?</Link>
+                </Button>
+
+                <Button variant="link">
+                  <Link href={"/sign-up"}>Create account</Link>
+                </Button>
+              </div>
             </div>
           </form>
 

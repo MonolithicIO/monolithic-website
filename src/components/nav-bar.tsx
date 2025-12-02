@@ -6,7 +6,7 @@ import LightLogo from "@images/monolithic-horizontal-light.svg";
 import DarkLogo from "@images/monolithic-horizontal-dark.svg";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
-import { Button } from "./button";
+import { Button } from "../core/components/ui/button";
 import Link from "next/link";
 import { useUser } from "src/hooks/user.hook";
 import {
@@ -16,15 +16,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./dropdown-menu";
+} from "../core/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+
+const ommitPaths = ["/login", "/sign-up", "/forgot-password"];
 
 export default function Navbar() {
   const { resolvedTheme, setTheme } = useTheme();
   const { user } = useUser();
   const isDark = resolvedTheme == "dark";
   const pathName = usePathname();
-  const showLoginButtons = !user && !["/login", "/sign-up"].includes(pathName);
+  const showLoginButtons = !user && !ommitPaths.includes(pathName);
 
   const toggleTheme = () => {
     if (isDark) {

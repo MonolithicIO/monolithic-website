@@ -19,6 +19,16 @@ export default class UserRepository {
     return rows[0];
   }
 
+  async getUserByEmail(email: string): Promise<UserModel | null> {
+    const rows = await this.databaseProvider.query<UserModel>("SELECT * FROM users WHERE email = $1", [email]);
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    return rows[0];
+  }
+
   async createUser(user: CreateUserModel): Promise<UserModel> {
     const rows = await this.databaseProvider.query<UserModel>(
       "INSERT INTO users (id, email, display_name, photo_url, phone_number, email_verified, provider, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
