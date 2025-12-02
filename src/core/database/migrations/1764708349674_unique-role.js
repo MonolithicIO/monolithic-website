@@ -1,5 +1,3 @@
-const { boolean } = require("zod");
-
 /**
  * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
  */
