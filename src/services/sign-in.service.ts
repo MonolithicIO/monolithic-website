@@ -9,40 +9,30 @@ import UserModel from "@model/user.model";
 import JwtSigner from "@core/jwt/JwtSigner";
 import GetUserRolesService from "./get-user-roles.service";
 import UuidProvider from "@core/providers/uuid.provider";
-
-type CookieResponse = {
-  jwtToken: string;
-  refreshToken: string;
-};
+import CreateSessionService from "./create-session.service";
 
 export default class SignInService {
   private readonly auth: Auth;
-  private readonly jwtSigner: JwtSigner;
   private readonly getUserService: GetUserService;
   private readonly createUserService: CreateUserService;
-  private readonly getUserRolesService: GetUserRolesService;
-  private readonly uuidProvider: UuidProvider;
+  private readonly createSessionService: CreateSessionService;
 
   constructor(
     admin: App = serverFirebaseApp,
     getUserService: GetUserService = new GetUserService(),
     createUserService: CreateUserService = new CreateUserService(),
-    uuidProvider: UuidProvider = new UuidProvider(),
-    jwtSigner: JwtSigner = new JwtSigner(),
-    getUserRolesService: GetUserRolesService = new GetUserRolesService()
+    createSessionService: CreateSessionService = new CreateSessionService()
   ) {
     this.getUserService = getUserService;
     this.createUserService = createUserService;
     this.auth = getAuth(admin);
-    this.uuidProvider = uuidProvider;
-    this.jwtSigner = jwtSigner;
-    this.getUserRolesService = getUserRolesService;
+    this.createSessionService = createSessionService;
   }
 
   async signIn(token: string): Promise<LoginResponseModel> {
     const firebaseId = await this.verifyFirebaseToken(token);
     const user = await this.createUserIfNotExists(firebaseId);
-    const cookieResponse = await this.generateSessionCookie(user);
+    const cookieResponse = await this.createSessionService.createUserSession(user);
 
     return {
       sessionCookie: cookieResponse.jwtToken,
@@ -74,23 +64,6 @@ export default class SignInService {
     } catch (err) {
       throw new Error("Failed to create user", { cause: err });
     }
-  }
-
-  private async generateSessionCookie(user: UserModel): Promise<CookieResponse> {
-    const roles = await this.getUserRolesService.getUserRoles(user.id);
-    const cookieUuid = this.uuidProvider.generate();
-
-    const jwtToken = this.jwtSigner.signToken({
-      userId: user.id,
-      roles: roles,
-      id: cookieUuid,
-    });
-    const refreshToken = this.uuidProvider.generate();
-
-    return {
-      jwtToken,
-      refreshToken,
-    };
   }
 
   private async verifyFirebaseToken(token: string): Promise<DecodedIdToken> {
