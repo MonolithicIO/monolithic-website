@@ -3,32 +3,50 @@ import { App } from "firebase-admin/app";
 import { Auth, DecodedIdToken, getAuth } from "firebase-admin/auth";
 import GetUserService from "./get-user.service";
 import CreateUserService from "./create-user.service";
-import LoginResponseModel from "@model/login-response.model";
 import { UnauthorizedError } from "@errors/api.error";
 import UserModel from "@model/user.model";
+import CreateSessionService from "./create-session.service";
+import UserRoleModel from "@model/user-role.model";
+
+type SignedUserModel = {
+  displayName: string;
+  photoUrl: string;
+  email: string;
+  roles: UserRoleModel[];
+  sessionCookie: string;
+  refreshToken: string;
+};
 
 export default class SignInService {
   private readonly auth: Auth;
   private readonly getUserService: GetUserService;
   private readonly createUserService: CreateUserService;
+  private readonly createSessionService: CreateSessionService;
 
   constructor(
     admin: App = serverFirebaseApp,
     getUserService: GetUserService = new GetUserService(),
-    createUserService: CreateUserService = new CreateUserService()
+    createUserService: CreateUserService = new CreateUserService(),
+    createSessionService: CreateSessionService = new CreateSessionService()
   ) {
     this.getUserService = getUserService;
     this.createUserService = createUserService;
     this.auth = getAuth(admin);
+    this.createSessionService = createSessionService;
   }
 
-  async signIn(token: string): Promise<LoginResponseModel> {
-    const verifyToken = await this.verifyToken(token);
-    const user = await this.createUserIfNotExists(verifyToken);
+  async signIn(token: string): Promise<SignedUserModel> {
+    const firebaseId = await this.verifyFirebaseToken(token);
+    const user = await this.createUserIfNotExists(firebaseId);
+    const sessionResponse = await this.createSessionService.createUserSession(user);
 
     return {
-      sessionCookie: await this.generateSessionCookie(token),
-      userModel: user,
+      sessionCookie: sessionResponse.jwtToken,
+      refreshToken: sessionResponse.refreshToken,
+      displayName: user.display_name,
+      photoUrl: user.photo_url,
+      email: user.email,
+      roles: sessionResponse.roles,
     };
   }
 
@@ -57,12 +75,7 @@ export default class SignInService {
     }
   }
 
-  private async generateSessionCookie(token: string): Promise<string> {
-    const expiration = 60 * 60 * 1000;
-    return await this.auth.createSessionCookie(token, { expiresIn: expiration });
-  }
-
-  private async verifyToken(token: string): Promise<DecodedIdToken> {
+  private async verifyFirebaseToken(token: string): Promise<DecodedIdToken> {
     try {
       const decodedToken = await this.auth.verifyIdToken(token, true);
       return decodedToken;

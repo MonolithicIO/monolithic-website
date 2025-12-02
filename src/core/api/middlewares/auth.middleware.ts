@@ -1,10 +1,11 @@
 import { UnauthorizedError } from "@errors/api.error";
 import { MiddlewareFunction } from "./middleware";
 import serverFirebaseApp from "@core/firebase/firebase-server.config";
+import JwtSigner from "@core/jwt/JwtSigner";
 
 const authMiddleware: MiddlewareFunction = async (context, next) => {
   const cookieHeader = context.request.headers.get("cookie");
-  const auth = serverFirebaseApp.auth();
+  const jwtSigner = new JwtSigner();
 
   if (!cookieHeader) {
     throw new UnauthorizedError("Unauthorized", "UNAUTHORIZED");
@@ -25,14 +26,19 @@ const authMiddleware: MiddlewareFunction = async (context, next) => {
     throw new UnauthorizedError();
   }
 
-  try {
-    const decodedAuthToken = await auth.verifySessionCookie(authToken);
-    context.userId = decodedAuthToken.uid;
-    return await next();
-  } catch (error) {
-    console.log("Failed to verify session cookie", error);
-    throw new UnauthorizedError("Unauthorized", "UNAUTHORIZED", error);
+  const decodedAuthToken = jwtSigner.decode(authToken);
+
+  if (decodedAuthToken === "expired") {
+    throw new UnauthorizedError("Unauthorized", "EXPIRED");
   }
+
+  if (decodedAuthToken === "invalid") {
+    throw new UnauthorizedError("Unauthorized", "INVALID");
+  }
+
+  context.userId = decodedAuthToken.userId;
+  context.roles = decodedAuthToken.roles;
+  return await next();
 };
 
 export default authMiddleware;
