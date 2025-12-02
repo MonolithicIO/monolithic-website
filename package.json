@@ -64,6 +64,7 @@
     "swr": "2.3.6",
     "tailwind-merge": "3.3.1",
     "tailwindcss": "4.1.16",
+    "uuid": "^13.0.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
@@ -75,6 +76,7 @@
     "@types/node-pg-migrate": "2.3.1",
     "@types/pg": "8.15.6",
     "@types/react": "19.2.2",
+    "@types/uuid": "^10.0.0",
     "concurrently": "9.2.1",
     "copy-webpack-plugin": "13.0.1",
     "danger": "13.0.4",

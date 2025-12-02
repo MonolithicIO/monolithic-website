@@ -1,8 +1,10 @@
+import UserRoleModel from "@model/user-role.model";
 import { sign, SignOptions, verify } from "jsonwebtoken";
 
 export type JwtSignerProps = {
+  id: string;
   userId: string;
-  roles: string[];
+  roles: UserRoleModel[];
 };
 
 export default class JwtSigner {

@@ -7,29 +7,46 @@ import LoginResponseModel from "@model/login-response.model";
 import { UnauthorizedError } from "@errors/api.error";
 import UserModel from "@model/user.model";
 import JwtSigner from "@core/jwt/JwtSigner";
+import GetUserRolesService from "./get-user-roles.service";
+import UuidProvider from "@core/providers/uuid.provider";
+
+type CookieResponse = {
+  jwtToken: string;
+  refreshToken: string;
+};
 
 export default class SignInService {
   private readonly auth: Auth;
   private readonly jwtSigner: JwtSigner;
   private readonly getUserService: GetUserService;
   private readonly createUserService: CreateUserService;
+  private readonly getUserRolesService: GetUserRolesService;
+  private readonly uuidProvider: UuidProvider;
 
   constructor(
     admin: App = serverFirebaseApp,
     getUserService: GetUserService = new GetUserService(),
-    createUserService: CreateUserService = new CreateUserService()
+    createUserService: CreateUserService = new CreateUserService(),
+    uuidProvider: UuidProvider = new UuidProvider(),
+    jwtSigner: JwtSigner = new JwtSigner(),
+    getUserRolesService: GetUserRolesService = new GetUserRolesService()
   ) {
     this.getUserService = getUserService;
     this.createUserService = createUserService;
     this.auth = getAuth(admin);
+    this.uuidProvider = uuidProvider;
+    this.jwtSigner = jwtSigner;
+    this.getUserRolesService = getUserRolesService;
   }
 
   async signIn(token: string): Promise<LoginResponseModel> {
     const firebaseId = await this.verifyFirebaseToken(token);
     const user = await this.createUserIfNotExists(firebaseId);
+    const cookieResponse = await this.generateSessionCookie(user);
 
     return {
-      sessionCookie: await this.generateSessionCookie(user),
+      sessionCookie: cookieResponse.jwtToken,
+      refreshToken: cookieResponse.refreshToken,
       userModel: user,
     };
   }
@@ -59,12 +76,21 @@ export default class SignInService {
     }
   }
 
-  private async generateSessionCookie(user: UserModel): Promise<string> {
-    // TODO: Add user roles
-    return this.jwtSigner.signToken({
+  private async generateSessionCookie(user: UserModel): Promise<CookieResponse> {
+    const roles = await this.getUserRolesService.getUserRoles(user.id);
+    const cookieUuid = this.uuidProvider.generate();
+
+    const jwtToken = this.jwtSigner.signToken({
       userId: user.id,
-      roles: [],
+      roles: roles,
+      id: cookieUuid,
     });
+    const refreshToken = this.uuidProvider.generate();
+
+    return {
+      jwtToken,
+      refreshToken,
+    };
   }
 
   private async verifyFirebaseToken(token: string): Promise<DecodedIdToken> {
