@@ -6,6 +6,7 @@ export const DELETE = createHandler([], async _context => {
   const cookieStore = await cookies();
 
   cookieStore.delete("session");
+  cookieStore.delete("refresh");
 
   /* 
   https://github.com/vercel/next.js/issues/49005
