@@ -22,8 +22,18 @@ export const POST = createHandler([], async context => {
     path: "/",
   });
 
+  cookiesStore.set({
+    name: "refresh",
+    value: response.refreshToken,
+    maxAge: 60 * 60 * 1000,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+  });
+
   return NextResponse.json(
-    { displayName: response.userModel.display_name, photoUrl: response.userModel.photo_url },
+    { displayName: response.displayName, photoUrl: response.photoUrl, roles: response.roles },
     { status: 201 }
   );
 });

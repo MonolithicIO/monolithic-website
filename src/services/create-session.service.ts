@@ -2,10 +2,12 @@ import JwtSigner from "@core/jwt/JwtSigner";
 import UserModel from "@model/user.model";
 import UuidProvider from "@core/providers/uuid.provider";
 import GetUserRolesService from "./get-user-roles.service";
+import UserRoleModel from "@model/user-role.model";
 
-type CookieResponse = {
+type SessionResponse = {
   jwtToken: string;
   refreshToken: string;
+  roles: UserRoleModel[];
 };
 
 export default class CreateSessionService {
@@ -23,7 +25,7 @@ export default class CreateSessionService {
     this.uuidProvider = uuidProvider;
   }
 
-  async createUserSession(user: UserModel): Promise<CookieResponse> {
+  async createUserSession(user: UserModel): Promise<SessionResponse> {
     const roles = await this.getUserRolesService.getUserRoles(user.id);
     const cookieUuid = this.uuidProvider.generate();
 
@@ -37,6 +39,7 @@ export default class CreateSessionService {
     return {
       jwtToken,
       refreshToken,
+      roles,
     };
   }
 }

@@ -3,13 +3,19 @@ import { App } from "firebase-admin/app";
 import { Auth, DecodedIdToken, getAuth } from "firebase-admin/auth";
 import GetUserService from "./get-user.service";
 import CreateUserService from "./create-user.service";
-import LoginResponseModel from "@model/login-response.model";
 import { UnauthorizedError } from "@errors/api.error";
 import UserModel from "@model/user.model";
-import JwtSigner from "@core/jwt/JwtSigner";
-import GetUserRolesService from "./get-user-roles.service";
-import UuidProvider from "@core/providers/uuid.provider";
 import CreateSessionService from "./create-session.service";
+import UserRoleModel from "@model/user-role.model";
+
+type SignedUserModel = {
+  displayName: string;
+  photoUrl: string;
+  email: string;
+  roles: UserRoleModel[];
+  sessionCookie: string;
+  refreshToken: string;
+};
 
 export default class SignInService {
   private readonly auth: Auth;
@@ -29,15 +35,18 @@ export default class SignInService {
     this.createSessionService = createSessionService;
   }
 
-  async signIn(token: string): Promise<LoginResponseModel> {
+  async signIn(token: string): Promise<SignedUserModel> {
     const firebaseId = await this.verifyFirebaseToken(token);
     const user = await this.createUserIfNotExists(firebaseId);
-    const cookieResponse = await this.createSessionService.createUserSession(user);
+    const sessionResponse = await this.createSessionService.createUserSession(user);
 
     return {
-      sessionCookie: cookieResponse.jwtToken,
-      refreshToken: cookieResponse.refreshToken,
-      userModel: user,
+      sessionCookie: sessionResponse.jwtToken,
+      refreshToken: sessionResponse.refreshToken,
+      displayName: user.display_name,
+      photoUrl: user.photo_url,
+      email: user.email,
+      roles: sessionResponse.roles,
     };
   }
 
