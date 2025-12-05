@@ -7,6 +7,7 @@ import { UnauthorizedError } from "@errors/api.error";
 import UserModel from "@model/user.model";
 import CreateSessionService from "./create-session.service";
 import UserRoleModel from "@model/user-role.model";
+import StoreRefreshTokenService from "./store-refresh-token.service";
 
 type SignedUserModel = {
   displayName: string;
@@ -22,23 +23,28 @@ export default class SignInService {
   private readonly getUserService: GetUserService;
   private readonly createUserService: CreateUserService;
   private readonly createSessionService: CreateSessionService;
+  private readonly storeRefreshTokenService: StoreRefreshTokenService;
 
   constructor(
     admin: App = serverFirebaseApp,
     getUserService: GetUserService = new GetUserService(),
     createUserService: CreateUserService = new CreateUserService(),
-    createSessionService: CreateSessionService = new CreateSessionService()
+    createSessionService: CreateSessionService = new CreateSessionService(),
+    storeRefreshTokenService: StoreRefreshTokenService = new StoreRefreshTokenService()
   ) {
     this.getUserService = getUserService;
     this.createUserService = createUserService;
     this.auth = getAuth(admin);
     this.createSessionService = createSessionService;
+    this.storeRefreshTokenService = storeRefreshTokenService;
   }
 
   async signIn(token: string): Promise<SignedUserModel> {
     const firebaseId = await this.verifyFirebaseToken(token);
     const user = await this.createUserIfNotExists(firebaseId);
     const sessionResponse = await this.createSessionService.createUserSession(user);
+
+    await this.storeRefreshTokenService.store(user.id, sessionResponse.refreshToken);
 
     return {
       sessionCookie: sessionResponse.jwtToken,

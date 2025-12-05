@@ -2,8 +2,7 @@ import AuthTokenRepository from "@repository/auth-token.repository";
 import GetUserService from "./get-user.service";
 import CreateSessionService from "./create-session.service";
 import { NotFoundError, ValidationError } from "@errors/api.error";
-import { DateProvider, DateProviderImpl } from "@core/providers/date.provider";
-import dayjs from "dayjs";
+import StoreRefreshTokenService from "./store-refresh-token.service";
 
 type RefreshedSession = {
   sessionCookie: string;
@@ -14,18 +13,18 @@ export default class RefreshTokenService {
   private readonly authTokenRepository: AuthTokenRepository;
   private readonly getUserService: GetUserService;
   private readonly createSessionService: CreateSessionService;
-  private readonly dateProvider: DateProvider;
+  private readonly storeRefreshTokenService: StoreRefreshTokenService;
 
   constructor(
     authTokenRepository: AuthTokenRepository = new AuthTokenRepository(),
     getUserService: GetUserService = new GetUserService(),
     createSessionService: CreateSessionService = new CreateSessionService(),
-    dateProvider: DateProvider = new DateProviderImpl()
+    storeRefreshTokenService = new StoreRefreshTokenService()
   ) {
     this.authTokenRepository = authTokenRepository;
     this.getUserService = getUserService;
     this.createSessionService = createSessionService;
-    this.dateProvider = dateProvider;
+    this.storeRefreshTokenService = storeRefreshTokenService;
   }
 
   async refresh(refreshToken: string): Promise<RefreshedSession> {
@@ -46,11 +45,7 @@ export default class RefreshTokenService {
     const sessionResponse = await this.createSessionService.createUserSession(user);
     await this.authTokenRepository.revokeToken(refreshToken);
 
-    const today = this.dateProvider.now();
-
-    const refreshExpiration = dayjs(today).add(7, "day").toDate();
-
-    await this.authTokenRepository.storeRefreshToken(user.id, refreshToken, refreshExpiration);
+    await this.storeRefreshTokenService.store(user.id, sessionResponse.refreshToken);
 
     return {
       sessionCookie: sessionResponse.jwtToken,

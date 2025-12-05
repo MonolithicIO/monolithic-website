@@ -1,6 +1,5 @@
 import { UnauthorizedError } from "@errors/api.error";
 import { MiddlewareFunction } from "./middleware";
-import serverFirebaseApp from "@core/firebase/firebase-server.config";
 import JwtSigner from "@core/jwt/JwtSigner";
 
 const authMiddleware: MiddlewareFunction = async (context, next) => {

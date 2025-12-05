@@ -1,12 +1,26 @@
 import { createHandler } from "@core/api/api-handler";
+import { UnauthorizedError } from "@errors/api.error";
 import RefreshTokenService from "@services/refresh-token.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { refreshLoginSchema } from "src/schemas/refresh-login.schema";
 
 export const POST = createHandler([], async _context => {
-  const body = await _context.request.json();
-  const { refreshToken } = refreshLoginSchema.parse(body);
+  const cookieHeader = _context.request.headers.get("cookie");
+
+  const requestCookies = cookieHeader.split(";").reduce(
+    (acc, cookie) => {
+      const [key, value] = cookie.trim().split("=");
+      acc[key] = value;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
+
+  const refreshToken = requestCookies["refresh"];
+
+  if (!refreshToken) {
+    throw new UnauthorizedError();
+  }
 
   const refreshTokenService = new RefreshTokenService();
   const response = await refreshTokenService.refresh(refreshToken);
