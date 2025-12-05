@@ -1,29 +1,19 @@
 import { createHandler } from "@core/api/api-handler";
+import getAuthCookies from "@core/api/cookies";
 import { UnauthorizedError } from "@errors/api.error";
 import RefreshTokenService from "@services/refresh-token.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const POST = createHandler([], async _context => {
-  const cookieHeader = _context.request.headers.get("cookie");
+  const { refresh } = getAuthCookies(_context.request.headers);
 
-  const requestCookies = cookieHeader.split(";").reduce(
-    (acc, cookie) => {
-      const [key, value] = cookie.trim().split("=");
-      acc[key] = value;
-      return acc;
-    },
-    {} as Record<string, string>
-  );
-
-  const refreshToken = requestCookies["refresh"];
-
-  if (!refreshToken) {
+  if (!refresh) {
     throw new UnauthorizedError();
   }
 
   const refreshTokenService = new RefreshTokenService();
-  const response = await refreshTokenService.refresh(refreshToken);
+  const response = await refreshTokenService.refresh(refresh);
   const cookiesStore = await cookies();
 
   cookiesStore.set({
