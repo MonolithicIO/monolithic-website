@@ -1,5 +1,8 @@
 "use client";
 import { useState, createContext, ReactNode, useContext, useEffect } from "react";
+import authEventBus from "@core/events/auth-event-bus";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface CurrentUser {
   displayName: string;
@@ -21,6 +24,7 @@ const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export function UserProvider({ children }: UserProviderProps) {
   const [user, setUser] = useState<CurrentUser | null>(null);
+  const router = useRouter();
 
   const updateUser = (user: CurrentUser) => {
     setUser(user);
@@ -39,6 +43,7 @@ export function UserProvider({ children }: UserProviderProps) {
     clearUser,
   };
 
+  // Load user from localStorage on mount
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
@@ -46,6 +51,23 @@ export function UserProvider({ children }: UserProviderProps) {
       setUser(JSON.parse(user));
     }
   }, []);
+
+  // Listen for auth refresh failures
+  useEffect(() => {
+    const handleAuthRefreshFailed = () => {
+      clearUser();
+      toast.error("Your session has expired. Please sign in again.");
+      router.push("/");
+    };
+
+    // Subscribe to auth events
+    const unsubscribe = authEventBus.on("auth:refresh-failed", handleAuthRefreshFailed);
+
+    // Cleanup on unmount
+    return () => {
+      unsubscribe();
+    };
+  }, [router]);
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

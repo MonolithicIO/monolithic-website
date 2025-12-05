@@ -1,5 +1,6 @@
 import { ErrorResponse } from "./error-handler";
 import handleResponse from "./handle-response";
+import authEventBus from "@core/events/auth-event-bus";
 
 type FetchOptions = {
   method?: string;
@@ -81,18 +82,14 @@ class ApiClient {
         return true;
       }
 
-      // If refresh fails, redirect to login
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
+      // If refresh fails, emit event for listeners to handle
+      authEventBus.emit("auth:refresh-failed");
       return false;
     } catch (error) {
       console.error("Token refresh failed:", error);
 
-      // Redirect to login on error
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
+      // Emit event on error
+      authEventBus.emit("auth:refresh-failed");
       return false;
     }
   }
