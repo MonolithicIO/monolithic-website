@@ -1,10 +1,18 @@
 import { createHandler } from "@core/api/api-handler";
+import RevokeRefreshTokenService from "@services/revoke-refresh-token.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import getAuthCookies from "@core/api/cookies";
 
 export const DELETE = createHandler([], async _context => {
-  const cookieStore = await cookies();
+  const { refresh } = getAuthCookies(_context.request.headers);
 
+  if (refresh) {
+    const revokeRefreshTokenService = new RevokeRefreshTokenService();
+    await revokeRefreshTokenService.revoke(refresh);
+  }
+
+  const cookieStore = await cookies();
   cookieStore.delete("session");
   cookieStore.delete("refresh");
 

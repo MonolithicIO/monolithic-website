@@ -1,15 +1,19 @@
 import { createHandler } from "@core/api/api-handler";
-import SignInService from "@services/sign-in.service";
+import getAuthCookies from "@core/api/cookies";
+import { UnauthorizedError } from "@errors/api.error";
+import RefreshTokenService from "@services/refresh-token.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { loginSchema } from "src/schemas/login.schema";
 
-export const POST = createHandler([], async context => {
-  const body = await context.request.json();
-  const { authToken } = loginSchema.parse(body);
+export const POST = createHandler([], async _context => {
+  const { refresh } = getAuthCookies(_context.request.headers);
 
-  const loginService = new SignInService();
-  const response = await loginService.signIn(authToken);
+  if (!refresh) {
+    throw new UnauthorizedError();
+  }
+
+  const refreshTokenService = new RefreshTokenService();
+  const response = await refreshTokenService.refresh(refresh);
   const cookiesStore = await cookies();
 
   cookiesStore.set({
@@ -32,8 +36,5 @@ export const POST = createHandler([], async context => {
     path: "/",
   });
 
-  return NextResponse.json(
-    { displayName: response.displayName, photoUrl: response.photoUrl, roles: response.roles },
-    { status: 201 }
-  );
+  return NextResponse.json({});
 });

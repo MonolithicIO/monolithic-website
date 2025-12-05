@@ -1,32 +1,17 @@
 import { UnauthorizedError } from "@errors/api.error";
 import { MiddlewareFunction } from "./middleware";
-import serverFirebaseApp from "@core/firebase/firebase-server.config";
 import JwtSigner from "@core/jwt/JwtSigner";
+import getAuthCookies from "../cookies";
 
 const authMiddleware: MiddlewareFunction = async (context, next) => {
-  const cookieHeader = context.request.headers.get("cookie");
+  const { session } = getAuthCookies(context.request.headers);
   const jwtSigner = new JwtSigner();
 
-  if (!cookieHeader) {
+  if (!session) {
     throw new UnauthorizedError("Unauthorized", "UNAUTHORIZED");
   }
 
-  const cookies = cookieHeader.split(";").reduce(
-    (acc, cookie) => {
-      const [key, value] = cookie.trim().split("=");
-      acc[key] = value;
-      return acc;
-    },
-    {} as Record<string, string>
-  );
-
-  const authToken = cookies["session"];
-
-  if (!authToken) {
-    throw new UnauthorizedError();
-  }
-
-  const decodedAuthToken = jwtSigner.decode(authToken);
+  const decodedAuthToken = jwtSigner.decode(session);
 
   if (decodedAuthToken === "expired") {
     throw new UnauthorizedError("Unauthorized", "EXPIRED");
