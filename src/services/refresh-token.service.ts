@@ -28,7 +28,7 @@ export default class RefreshTokenService {
     this.dateProvider = dateProvider;
   }
 
-  async execute(refreshToken: string): Promise<RefreshedSession> {
+  async refresh(refreshToken: string): Promise<RefreshedSession> {
     const token = await this.authTokenRepository.getRefreshToken(refreshToken);
 
     if (!token) {

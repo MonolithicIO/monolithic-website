@@ -1,15 +1,15 @@
 import { createHandler } from "@core/api/api-handler";
-import SignInService from "@services/sign-in.service";
+import RefreshTokenService from "@services/refresh-token.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { loginSchema } from "src/schemas/login.schema";
+import { refreshLoginSchema } from "src/schemas/refresh-login.schema";
 
-export const POST = createHandler([], async context => {
-  const body = await context.request.json();
-  const { authToken } = loginSchema.parse(body);
+export const POST = createHandler([], async _context => {
+  const body = await _context.request.json();
+  const { refreshToken } = refreshLoginSchema.parse(body);
 
-  const loginService = new SignInService();
-  const response = await loginService.signIn(authToken);
+  const refreshTokenService = new RefreshTokenService();
+  const response = await refreshTokenService.refresh(refreshToken);
   const cookiesStore = await cookies();
 
   cookiesStore.set({
@@ -32,8 +32,5 @@ export const POST = createHandler([], async context => {
     path: "/",
   });
 
-  return NextResponse.json(
-    { displayName: response.displayName, photoUrl: response.photoUrl, roles: response.roles },
-    { status: 201 }
-  );
+  return NextResponse.json({});
 });
