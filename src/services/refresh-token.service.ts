@@ -3,6 +3,7 @@ import GetUserService from "./get-user.service";
 import CreateSessionService from "./create-session.service";
 import { NotFoundError, ValidationError } from "@errors/api.error";
 import { DateProvider, DateProviderImpl } from "@core/providers/date.provider";
+import dayjs from "dayjs";
 
 type RefreshedSession = {
   sessionCookie: string;
@@ -44,13 +45,12 @@ export default class RefreshTokenService {
 
     const sessionResponse = await this.createSessionService.createUserSession(user);
     await this.authTokenRepository.revokeToken(refreshToken);
-    const refreshExpiration = this.dateProvider.now();
 
-    await this.authTokenRepository.storeRefreshToken(
-      user.id,
-      refreshToken,
-      this.dateProvider.now().add(1, "day").toDate()
-    );
+    const today = this.dateProvider.now();
+
+    const refreshExpiration = dayjs(today).add(7, "day").toDate();
+
+    await this.authTokenRepository.storeRefreshToken(user.id, refreshToken, refreshExpiration);
 
     return {
       sessionCookie: sessionResponse.jwtToken,
