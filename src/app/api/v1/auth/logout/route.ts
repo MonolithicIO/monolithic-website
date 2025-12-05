@@ -7,8 +7,10 @@ import getAuthCookies from "@core/api/cookies";
 export const DELETE = createHandler([], async _context => {
   const { refresh } = getAuthCookies(_context.request.headers);
 
-  const revokeRefreshTokenService = new RevokeRefreshTokenService();
-  await revokeRefreshTokenService.revoke(refresh);
+  if (refresh) {
+    const revokeRefreshTokenService = new RevokeRefreshTokenService();
+    await revokeRefreshTokenService.revoke(refresh);
+  }
 
   const cookieStore = await cookies();
   cookieStore.delete("session");

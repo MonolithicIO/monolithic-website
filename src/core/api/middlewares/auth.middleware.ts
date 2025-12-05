@@ -7,6 +7,10 @@ const authMiddleware: MiddlewareFunction = async (context, next) => {
   const { session } = getAuthCookies(context.request.headers);
   const jwtSigner = new JwtSigner();
 
+  if (!session) {
+    throw new UnauthorizedError("Unauthorized", "UNAUTHORIZED");
+  }
+
   const decodedAuthToken = jwtSigner.decode(session);
 
   if (decodedAuthToken === "expired") {

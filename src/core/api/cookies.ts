@@ -1,15 +1,16 @@
-import { UnauthorizedError } from "@errors/api.error";
-
 type AuthCookies = {
-  refresh: string;
-  session: string;
+  refresh: string | null;
+  session: string | null;
 };
 
 const getAuthCookies = (headers: Headers): AuthCookies => {
   const cookieHeader = headers.get("cookie");
 
   if (!cookieHeader) {
-    throw new UnauthorizedError("Unauthorized", "UNAUTHORIZED");
+    return {
+      refresh: null,
+      session: null,
+    };
   }
 
   const requestCookies = cookieHeader.split(";").reduce(
