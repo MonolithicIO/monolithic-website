@@ -2,7 +2,7 @@ import { DatabaseProvider } from "@core/database/database.provider";
 import { DateProvider, DateProviderImpl } from "@core/providers/date.provider";
 import RefreshTokenModel from "@model/refresh-token.model";
 
-class AuthTokenRepository {
+export default class AuthTokenRepository {
   private readonly databaseProvider: DatabaseProvider;
   private readonly dateProvider: DateProvider;
 
