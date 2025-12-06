@@ -1,6 +1,5 @@
 import apiClient from "@core/api/api-client";
 import { ErrorResponse } from "@core/api/error-handler";
-import handleResponse from "@core/api/handle-response";
 import clientFirebaseApp from "@core/firebase/firebase-client.config";
 import { FirebaseError } from "firebase/app";
 import {
