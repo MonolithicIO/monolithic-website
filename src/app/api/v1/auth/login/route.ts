@@ -32,8 +32,5 @@ export const POST = createHandler([], async context => {
     path: "/",
   });
 
-  return NextResponse.json(
-    { displayName: response.displayName, photoUrl: response.photoUrl, roles: response.roles },
-    { status: 201 }
-  );
+  return NextResponse.json({}, { status: 201 });
 });

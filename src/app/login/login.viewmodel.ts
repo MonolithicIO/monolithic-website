@@ -1,5 +1,5 @@
+import apiClient from "@core/api/api-client";
 import { ErrorResponse } from "@core/api/error-handler";
-import handleResponse from "@core/api/handle-response";
 import clientFirebaseApp from "@core/firebase/firebase-client.config";
 import { FirebaseError } from "firebase/app";
 import {
@@ -24,7 +24,7 @@ const useLoginViewModel = () => {
   const [error, setError] = useState<string | null>(null);
   const [hidePassword, setHidePassword] = useState(false);
   const auth = getAuth(clientFirebaseApp);
-  const { updateUser } = useUser();
+  const { refreshUser } = useUser();
 
   const credentialSignIn = async (): Promise<boolean> => {
     try {
@@ -96,24 +96,16 @@ const useLoginViewModel = () => {
   const handleSignIn = async (credential: UserCredential) => {
     const idToken = await credential.user.getIdToken();
 
-    const response = await fetch("api/v1/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ authToken: idToken }),
-    });
-
-    const result = await handleResponse<LoginResponse>(response);
+    const result = await apiClient.post<LoginResponse>(
+      "/api/v1/auth/login",
+      { authToken: idToken },
+      { skipRefresh: true }
+    );
 
     if (result instanceof ErrorResponse) {
       throw result;
     }
-
-    updateUser({
-      displayName: result.displayName,
-      photoUrl: result.photoUrl,
-    });
+    await refreshUser();
   };
 
   return {

@@ -1,4 +1,3 @@
-import UserRoleModel from "@model/user-role.model";
 import UserRolesRepository from "@repository/user-roles.repository";
 
 export default class GetUserRolesService {
@@ -8,7 +7,7 @@ export default class GetUserRolesService {
     this.userRolesRepository = userRolesRepository;
   }
 
-  getUserRoles(userId: string): Promise<UserRoleModel[]> {
+  getUserRoles(userId: string): Promise<string[]> {
     return this.userRolesRepository.getUserRoles(userId);
   }
 }

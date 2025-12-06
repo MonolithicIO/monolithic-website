@@ -1,10 +1,9 @@
-import UserRoleModel from "@model/user-role.model";
 import { sign, SignOptions, TokenExpiredError, verify } from "jsonwebtoken";
 
 export type JwtSignerProps = {
   id: string;
   userId: string;
-  roles: UserRoleModel[];
+  roles: string[];
 };
 
 export type JwtSignerDecodedProps = JwtSignerProps | "expired" | "invalid";

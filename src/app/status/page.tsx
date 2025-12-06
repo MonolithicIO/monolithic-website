@@ -52,7 +52,7 @@ type ContentProps = {
 
 function Content({ data }: ContentProps) {
   return (
-    <main className="flex min-h-screen flex-col items-start p-16 gap-8">
+    <main className="flex min-h-screen flex-col items-start p-16 gap-8 mt-12">
       <h1 className="text-4xl font-semibold">Service status</h1>
 
       <section className="flex flex-row gap-8 w-full">

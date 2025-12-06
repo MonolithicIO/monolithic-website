@@ -1,16 +1,22 @@
 "use client";
-import { useState, createContext, ReactNode, useContext, useEffect } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import authEventBus from "@core/events/auth-event-bus";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import apiClient from "@core/api/api-client";
+import { ErrorResponse } from "@core/api/error-handler";
 
 interface CurrentUser {
   displayName: string;
   photoUrl: string | null;
+  email: string;
+  roles: string[];
 }
 
 interface UserContextValue {
   user: CurrentUser | null;
-  // eslint-disable-next-line no-unused-vars
-  updateUser: (_user: CurrentUser) => void;
   clearUser: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 interface UserProviderProps {
@@ -20,32 +26,54 @@ interface UserProviderProps {
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export function UserProvider({ children }: UserProviderProps) {
-  const [user, setUser] = useState<CurrentUser | null>(null);
+  const [user, setUser] = useState<CurrentUser | null>(() => {
+    if (typeof window === "undefined") return null;
+    const user = localStorage.getItem("user");
+    if (user) {
+      return JSON.parse(user);
+    }
+    return null;
+  });
 
-  const updateUser = (user: CurrentUser) => {
-    setUser(user);
-    localStorage.setItem("user", JSON.stringify(user));
-  };
+  const router = useRouter();
 
   const clearUser = async () => {
+    apiClient.delete("/api/v1/auth/logout");
+
     localStorage.removeItem("user");
-    fetch("api/v1/auth/logout", { method: "DELETE" });
+    localStorage.removeItem("hasSession");
     setUser(null);
   };
 
+  const refreshUser = async () => {
+    const result = await apiClient.get<CurrentUser>("/api/v1/user/me");
+    if (result instanceof ErrorResponse) {
+      throw result;
+    }
+    setUser(result);
+    localStorage.setItem("user", JSON.stringify(result));
+    localStorage.setItem("hasSession", "true");
+  };
+
   const value: UserContextValue = {
-    user,
-    updateUser,
+    user: user ?? null,
     clearUser,
+    refreshUser,
   };
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(JSON.parse(user));
-    }
-  }, []);
+    const handleAuthRefreshFailed = () => {
+      localStorage.removeItem("user");
+      toast.error("Your session has expired. Please sign in again.");
+      router.push("/");
+    };
+
+    const unsubscribe = authEventBus.on("auth:refresh-failed", handleAuthRefreshFailed);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [router]);
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

@@ -2,12 +2,11 @@ import JwtSigner from "@core/jwt/JwtSigner";
 import UserModel from "@model/user.model";
 import UuidProvider from "@core/providers/uuid.provider";
 import GetUserRolesService from "./get-user-roles.service";
-import UserRoleModel from "@model/user-role.model";
 
 type SessionResponse = {
   jwtToken: string;
   refreshToken: string;
-  roles: UserRoleModel[];
+  roles: string[];
 };
 
 export default class CreateSessionService {

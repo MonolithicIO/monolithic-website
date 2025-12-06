@@ -8,11 +8,16 @@ export default class UserRolesRepository {
     this.databaseProvider = databaseProvider;
   }
 
-  async getUserRoles(userId: string): Promise<UserRoleModel[]> {
-    const response = await this.databaseProvider.query("SELECT * FROM user_roles WHERE user_id = $1", [userId]);
+  async getUserRoles(userId: string): Promise<string[]> {
+    const response = await this.databaseProvider.query("SELECT role_id FROM user_roles WHERE user_id = $1", [userId]);
 
-    const mappedRows = response.map(row => row.role_id as UserRoleModel).filter(role => role !== undefined);
+    const mappedRoles = response
+      .map(row => {
+        const roleId = row.role_id as number;
+        return UserRoleModel[roleId] as string;
+      })
+      .filter(role => role !== undefined);
 
-    return mappedRows;
+    return mappedRoles;
   }
 }

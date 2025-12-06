@@ -6,14 +6,9 @@ import CreateUserService from "./create-user.service";
 import { UnauthorizedError } from "@errors/api.error";
 import UserModel from "@model/user.model";
 import CreateSessionService from "./create-session.service";
-import UserRoleModel from "@model/user-role.model";
 import StoreRefreshTokenService from "./store-refresh-token.service";
 
 type SignedUserModel = {
-  displayName: string;
-  photoUrl: string;
-  email: string;
-  roles: UserRoleModel[];
   sessionCookie: string;
   refreshToken: string;
 };
@@ -49,10 +44,6 @@ export default class SignInService {
     return {
       sessionCookie: sessionResponse.jwtToken,
       refreshToken: sessionResponse.refreshToken,
-      displayName: user.display_name,
-      photoUrl: user.photo_url,
-      email: user.email,
-      roles: sessionResponse.roles,
     };
   }
 
