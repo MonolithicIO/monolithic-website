@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import apiClient from "@core/api/api-client";
 import { ErrorResponse } from "@core/api/error-handler";
-import useSWR from "swr";
 
 interface CurrentUser {
   displayName: string;
@@ -16,8 +15,6 @@ interface CurrentUser {
 
 interface UserContextValue {
   user: CurrentUser | null;
-  isLoading: boolean;
-  error: Error | null;
   clearUser: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -28,72 +25,44 @@ interface UserProviderProps {
 
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
-const fetcher = async (url: string): Promise<CurrentUser | null> => {
-  const result = await apiClient.get<CurrentUser>(url);
-
-  if (result instanceof ErrorResponse) {
-    if (result.statusCode === 401) {
-      return null;
-    }
-    throw result;
-  }
-
-  return result;
-};
-
 export function UserProvider({ children }: UserProviderProps) {
-  const router = useRouter();
-
-  const [hasSession, setHasSession] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("hasSession") === "true";
+  const [user, setUser] = useState<CurrentUser | null>(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      return JSON.parse(user);
+    }
+    return null;
   });
 
-  const {
-    data: user,
-    error,
-    mutate,
-    isLoading,
-  } = useSWR<CurrentUser | null, Error>(
-    hasSession ? "/api/v1/user/me" : null, // null key prevents SWR from fetching
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-      shouldRetryOnError: false,
-      dedupingInterval: 5000,
-    }
-  );
+  const router = useRouter();
 
   const clearUser = async () => {
-    await apiClient.delete("/api/v1/auth/logout");
-    mutate(null, false);
+    apiClient.delete("/api/v1/auth/logout");
+
     localStorage.removeItem("user");
     localStorage.removeItem("hasSession");
-    setHasSession(false);
+    setUser(null);
   };
 
   const refreshUser = async () => {
-    if (!hasSession) {
-      setHasSession(true);
+    const result = await apiClient.get<CurrentUser>("/api/v1/user/me");
+    if (result instanceof ErrorResponse) {
+      throw result;
     }
-    await mutate();
+    setUser(result);
+    localStorage.setItem("user", JSON.stringify(result));
+    localStorage.setItem("hasSession", "true");
   };
 
   const value: UserContextValue = {
     user: user ?? null,
-    isLoading: hasSession ? isLoading : false,
-    error: error ?? null,
     clearUser,
     refreshUser,
   };
 
   useEffect(() => {
     const handleAuthRefreshFailed = () => {
-      mutate(null, false);
       localStorage.removeItem("user");
-      localStorage.removeItem("hasSession");
-      setHasSession(false);
       toast.error("Your session has expired. Please sign in again.");
       router.push("/");
     };
@@ -103,7 +72,7 @@ export function UserProvider({ children }: UserProviderProps) {
     return () => {
       unsubscribe();
     };
-  }, [router, mutate]);
+  }, [router]);
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

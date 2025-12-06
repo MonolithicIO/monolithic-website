@@ -1,5 +1,5 @@
 "use client";
-import { Moon, Sun, User, LogOut, ChevronDown, Loader2 } from "lucide-react";
+import { Moon, Sun, User, LogOut, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import LightLogo from "@images/monolithic-horizontal-light.svg";
@@ -23,10 +23,10 @@ const ommitPaths = ["/login", "/sign-up", "/forgot-password"];
 
 export default function Navbar() {
   const { resolvedTheme, setTheme } = useTheme();
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
   const isDark = resolvedTheme == "dark";
   const pathName = usePathname();
-  const showLoginButtons = !user && !isLoading && !ommitPaths.includes(pathName);
+  const showLoginButtons = !user && !ommitPaths.includes(pathName);
 
   const toggleTheme = () => {
     if (isDark) {
@@ -51,8 +51,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2">
             {showLoginButtons && <LoginButtons />}
-            {isLoading && <UserLoadingState />}
-            {user && !isLoading && <UserMenu />}
+            {user && <UserMenu />}
             <button
               onClick={toggleTheme}
               className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
@@ -76,17 +75,6 @@ function LoginButtons() {
       <Button>
         <Link href={"sign-up"}>Sign up</Link>
       </Button>
-    </div>
-  );
-}
-
-function UserLoadingState() {
-  return (
-    <div className="flex items-center gap-2 rounded-full border border-border bg-background px-2 py-1.5">
-      <div className="relative h-8 w-8 overflow-hidden rounded-full bg-muted flex items-center justify-center">
-        <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
-      </div>
-      <ChevronDown className="h-4 w-4 text-muted-foreground opacity-50" />
     </div>
   );
 }

@@ -107,7 +107,6 @@ const useLoginViewModel = () => {
       throw result;
     }
     await refreshUser();
-    localStorage.setItem("hasSession", "true");
   };
 
   return {
