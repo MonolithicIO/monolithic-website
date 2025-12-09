@@ -12,7 +12,10 @@ const useForgotPasswordViewModel = () => {
   const onSubmit = async () => {
     try {
       setLoading(true);
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(auth, email, {
+        url: getResetPasswordLink(),
+        handleCodeInApp: true,
+      });
       setSuccess(true);
     } catch {
       setError("Failed to send reset email. Please try again.");
@@ -24,6 +27,10 @@ const useForgotPasswordViewModel = () => {
   const onDismissSuccess = () => {
     setSuccess(false);
     setEmail("");
+  };
+
+  const getResetPasswordLink = (): string => {
+    return process.env.NEXT_PUBLIC_RESET_PASSWORD_LINK;
   };
 
   return {
