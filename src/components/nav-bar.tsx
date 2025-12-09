@@ -27,6 +27,7 @@ export default function Navbar() {
   const isDark = resolvedTheme == "dark";
   const pathName = usePathname();
   const showLoginButtons = !user && !ommitPaths.includes(pathName);
+  const showNewPostButton = user && user.roles.includes("Author");
 
   const toggleTheme = () => {
     if (isDark) {
@@ -53,12 +54,15 @@ export default function Navbar() {
             {showLoginButtons && <LoginButtons />}
             {user && (
               <>
-                <Button asChild>
-                  <Link href="/new-post" className="flex items-center gap-2">
-                    <PenSquare className="h-4 w-4" />
-                    <span className="hidden sm:inline">Create new post</span>
-                  </Link>
-                </Button>
+                {showNewPostButton && (
+                  <Button asChild>
+                    <Link href="/new-post" className="flex items-center gap-2">
+                      <PenSquare className="h-4 w-4" />
+                      <span className="hidden sm:inline">Create new post</span>
+                    </Link>
+                  </Button>
+                )}
+
                 <UserMenu />
               </>
             )}
