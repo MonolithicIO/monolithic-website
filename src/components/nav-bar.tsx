@@ -1,5 +1,5 @@
 "use client";
-import { Moon, Sun, User, LogOut, ChevronDown } from "lucide-react";
+import { Moon, Sun, User, LogOut, ChevronDown, PenSquare } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import LightLogo from "@images/monolithic-horizontal-light.svg";
@@ -51,7 +51,17 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2">
             {showLoginButtons && <LoginButtons />}
-            {user && <UserMenu />}
+            {user && (
+              <>
+                <Button asChild>
+                  <Link href="/new-post" className="flex items-center gap-2">
+                    <PenSquare className="h-4 w-4" />
+                    <span className="hidden sm:inline">Create new post</span>
+                  </Link>
+                </Button>
+                <UserMenu />
+              </>
+            )}
             <button
               onClick={toggleTheme}
               className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
