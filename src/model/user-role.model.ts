@@ -43,4 +43,17 @@ export const getRoleCode = (role: UserRoleModel): number => {
   }
 };
 
+export const getRoleString = (role: UserRoleModel): string => {
+  switch (role) {
+    case UserRoleModel.Owner:
+      return "Owner";
+    case UserRoleModel.Admin:
+      return "Admin";
+    case UserRoleModel.Author:
+      return "Author";
+    default:
+      return "Unknown";
+  }
+};
+
 export default UserRoleModel;
