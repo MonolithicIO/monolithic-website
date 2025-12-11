@@ -1,7 +1,7 @@
 import JwtSigner from "@core/jwt/JwtSigner";
 import UserModel from "@model/user.model";
 import UuidProvider from "@core/providers/uuid.provider";
-import GetUserRolesService from "./get-user-roles.service";
+import GetUserRolesService from "../roles/get-user-roles.service";
 
 type SessionResponse = {
   jwtToken: string;

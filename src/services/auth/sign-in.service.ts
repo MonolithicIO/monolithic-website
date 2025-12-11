@@ -1,12 +1,12 @@
 import serverFirebaseApp from "@core/firebase/firebase-server.config";
 import { App } from "firebase-admin/app";
 import { Auth, DecodedIdToken, getAuth } from "firebase-admin/auth";
-import GetUserService from "./get-user.service";
-import CreateUserService from "./create-user.service";
 import { UnauthorizedError } from "@errors/api.error";
 import UserModel from "@model/user.model";
+import GetUserService from "@services/user/get-user.service";
 import CreateSessionService from "./create-session.service";
 import StoreRefreshTokenService from "./store-refresh-token.service";
+import CreateUserService from "@services/user/create-user.service";
 
 type SignedUserModel = {
   sessionCookie: string;
