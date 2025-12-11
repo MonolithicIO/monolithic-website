@@ -28,7 +28,7 @@ export default class GetCurrentUserService {
       displayName: user.display_name,
       photoUrl: user.photo_url,
       email: user.email,
-      roles: roles,
+      roles: roles.map(role => role.toString()),
     };
   }
 }

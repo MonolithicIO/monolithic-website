@@ -1,9 +1,11 @@
+import UserRoleModel from "@model/user-role.model";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface MiddlewareContext {
   request: NextRequest;
   params?: any;
   userId?: string;
+  roles?: UserRoleModel[];
   [key: string]: any;
 }
 

@@ -12,9 +12,9 @@ export default class DraftsRepository {
     this.databaseProvider = databaseProvider;
   }
 
-  async createDraft(userId: string, title: string, postId: string | null): Promise<string> {
+  async createDraft(props: { userId: string; title: string; postId: string | null }): Promise<string> {
     let mode: string;
-    if (postId) {
+    if (props.postId) {
       mode = "EDIT";
     } else {
       mode = "NEW";
@@ -22,7 +22,7 @@ export default class DraftsRepository {
 
     const query = await this.databaseProvider.query(
       "`INSERT INTO drafts (user_id, title, post_id, type) VALUES ($1, $2, $3, $4)`",
-      [userId, title, postId, mode]
+      [props.userId, props.title, props.postId, mode]
     );
 
     return query[0].id;
@@ -46,11 +46,11 @@ export default class DraftsRepository {
     };
   }
 
-  async updateDraft(draftId: string, title: string, markdownContent: string): Promise<void> {
+  async updateDraft(props: { draftId: string; title: string; markdownContent: string }): Promise<void> {
     await this.databaseProvider.query("`UPDATE drafts SET title = $2, markdown_content = $3 WHERE id = $1`", [
-      draftId,
-      title,
-      markdownContent,
+      props.draftId,
+      props.title,
+      props.markdownContent,
     ]);
   }
 
@@ -58,11 +58,11 @@ export default class DraftsRepository {
     await this.databaseProvider.query("`DELETE FROM drafts WHERE id = $1`", [draftId]);
   }
 
-  async listDrafts(filters: DraftFilters, page: number, pageSize: number): Promise<Draft[]> {
-    const offset = (page - 1) * pageSize;
+  async listDrafts(props: { filters: DraftFilters; page: number; pageSize: number }): Promise<Draft[]> {
+    const offset = (props.page - 1) * props.pageSize;
     const query = await this.databaseProvider.query(
       "`SELECT * FROM drafts WHERE author_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`",
-      [filters.authorId, pageSize, offset]
+      [props.filters.authorId, props.pageSize, offset]
     );
 
     return query.map(object => {
