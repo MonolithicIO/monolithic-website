@@ -1,5 +1,5 @@
 import { createHandler } from "@core/api/api-handler";
-import SignInService from "@services/sign-in.service";
+import SignInService from "@services/auth/sign-in.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { loginSchema } from "src/schemas/login.schema";

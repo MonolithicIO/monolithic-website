@@ -1,7 +1,7 @@
 import JwtSigner from "@core/jwt/JwtSigner";
 import UserModel from "@model/user.model";
 import UuidProvider from "@core/providers/uuid.provider";
-import GetUserRolesService from "./get-user-roles.service";
+import GetUserRolesService from "../roles/get-user-roles.service";
 
 type SessionResponse = {
   jwtToken: string;
@@ -26,11 +26,12 @@ export default class CreateSessionService {
 
   async createUserSession(user: UserModel): Promise<SessionResponse> {
     const roles = await this.getUserRolesService.getUserRoles(user.id);
+    const stringRoles = roles.map(role => role.toString());
     const cookieUuid = this.uuidProvider.generate();
 
     const jwtToken = this.jwtSigner.signToken({
       userId: user.id,
-      roles: roles,
+      roles: stringRoles,
       id: cookieUuid,
     });
     const refreshToken = this.uuidProvider.generate();
@@ -38,7 +39,7 @@ export default class CreateSessionService {
     return {
       jwtToken,
       refreshToken,
-      roles,
+      roles: stringRoles,
     };
   }
 }

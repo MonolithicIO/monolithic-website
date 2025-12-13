@@ -2,7 +2,7 @@ import CreateUserModel from "@model/create-user.model";
 import UserModel from "@model/user.model";
 import UserRepository from "@repository/user.repository";
 
-export default class CreateUserSercice {
+export default class CreateUserService {
   private readonly userRepository: UserRepository;
 
   constructor(userRepository: UserRepository = new UserRepository()) {

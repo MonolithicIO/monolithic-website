@@ -2,6 +2,7 @@ import { UnauthorizedError } from "@errors/api.error";
 import { MiddlewareFunction } from "./middleware";
 import JwtSigner from "@core/jwt/JwtSigner";
 import getAuthCookies from "../cookies";
+import { mapStringToUserRole } from "@model/user-role.model";
 
 const authMiddleware: MiddlewareFunction = async (context, next) => {
   const { session } = getAuthCookies(context.request.headers);
@@ -22,7 +23,7 @@ const authMiddleware: MiddlewareFunction = async (context, next) => {
   }
 
   context.userId = decodedAuthToken.userId;
-  context.roles = decodedAuthToken.roles;
+  context.roles = decodedAuthToken.roles.map(role => mapStringToUserRole(role));
   return await next();
 };
 

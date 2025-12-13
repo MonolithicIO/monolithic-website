@@ -1,7 +1,7 @@
 import { createHandler } from "@core/api/api-handler";
 import getAuthCookies from "@core/api/cookies";
 import { UnauthorizedError } from "@errors/api.error";
-import RefreshTokenService from "@services/refresh-token.service";
+import RefreshTokenService from "@services/auth/refresh-token.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 

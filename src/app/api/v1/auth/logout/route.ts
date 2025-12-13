@@ -1,5 +1,5 @@
 import { createHandler } from "@core/api/api-handler";
-import RevokeRefreshTokenService from "@services/revoke-refresh-token.service";
+import RevokeRefreshTokenService from "@services/auth/revoke-refresh-token.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import getAuthCookies from "@core/api/cookies";

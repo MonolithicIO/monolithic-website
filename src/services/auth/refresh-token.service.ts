@@ -1,8 +1,8 @@
 import AuthTokenRepository from "@repository/auth-token.repository";
-import GetUserService from "./get-user.service";
-import CreateSessionService from "./create-session.service";
+import GetUserService from "@services/user/get-user.service";
+import CreateSessionService from "@services/auth/create-session.service";
 import { NotFoundError, ValidationError } from "@errors/api.error";
-import StoreRefreshTokenService from "./store-refresh-token.service";
+import StoreRefreshTokenService from "@services/auth/store-refresh-token.service";
 
 type RefreshedSession = {
   sessionCookie: string;

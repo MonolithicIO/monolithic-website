@@ -1,3 +1,4 @@
+import { getRoleString } from "@model/user-role.model";
 import UserRolesRepository from "@repository/user-roles.repository";
 import UserRepository from "@repository/user.repository";
 
@@ -28,7 +29,7 @@ export default class GetCurrentUserService {
       displayName: user.display_name,
       photoUrl: user.photo_url,
       email: user.email,
-      roles: roles,
+      roles: roles.map(role => getRoleString(role)),
     };
   }
 }
